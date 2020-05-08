@@ -1,0 +1,22 @@
+{
+  "name": "discord-github-lines-bot",
+  "version": "1.0.0",
+  "description": "Discord bot to highlight lines in Github links",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "keywords": [
+    "nodejs",
+    "discord.js",
+    "github"
+  ],
+  "author": "diogoscf",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0",
+    "open-graph-scraper": "^3.6.2"
+  }
+}
