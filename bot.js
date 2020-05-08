@@ -9,6 +9,31 @@ const { TOKEN } = process.env;
 const bot = new DiscordBot.Client();
 bot.login(TOKEN);
 
+function formatIndent(str) {
+  const lines = str.replace(/\t/g, "    ").split("\n");
+  let ignored = [];
+  let minSpaces = Infinity;
+  let newLines = [];
+  lines.forEach((line, idx) => {
+    const leadingSpaces = line.search(/\S/);
+    if (leadingSpaces == -1) {
+      ignored.push(idx);
+    } else if (leadingSpaces < minSpaces) {
+      minSpaces = leadingSpaces;
+    }
+  });
+
+  lines.forEach((line, idx) => {
+    if (ignored.includes(idx)) {
+      newLines.push(line);
+    } else {
+      newLines.push(line.substring(minSpaces));
+    };
+  });
+
+  return newLines.join("\n")
+};
+
 bot.on("message", async (msg) => {
 
   // prevent replying to own messages
@@ -27,12 +52,8 @@ bot.on("message", async (msg) => {
   if (!githubMatch[5].length) {
     toDisplay = lines[parseInt(githubMatch[4], 10) - 1].trim();
   } else {
-    toDisplay = lines.slice(parseInt(githubMatch[4], 10) - 1, parseInt(githubMatch[5], 10)).join("\n");
+    toDisplay = formatIndent(lines.slice(parseInt(githubMatch[4], 10) - 1, parseInt(githubMatch[5], 10)).join("\n"));
   };
-
-  const ogData = await ogscraper({
-    url: githubMatch[0]
-  })
 
   msg.suppressEmbeds();
   msg.channel.send(`\`\`\`${githubMatch[3]}\n${toDisplay}\`\`\``);
