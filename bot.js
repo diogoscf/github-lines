@@ -41,21 +41,23 @@ bot.on("message", async (msg) => {
     return;
   };
 
-  const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\.(\w+)#L(\d+)-?L?(\d*)/i);
+  const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)#L(\d+)-?L?(\d*)/i);
   if (!githubMatch) return;
 
-  const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}.${githubMatch[3]}`);
+  const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}`);
   const text = await resp.text();
   const lines = text.split("\n");
   let toDisplay;
-  console.log(githubMatch)
-  if (!githubMatch[5].length) {
-    toDisplay = lines[parseInt(githubMatch[4], 10) - 1].trim();
+  //matchPlac
+  if (!githubMatch[4].length) {
+    toDisplay = lines[parseInt(githubMatch[3], 10) - 1].trim();
   } else {
-    toDisplay = formatIndent(lines.slice(parseInt(githubMatch[4], 10) - 1, parseInt(githubMatch[5], 10)).join("\n"));
+    toDisplay = formatIndent(lines.slice(parseInt(githubMatch[3], 10) - 1, parseInt(githubMatch[4], 10)).join("\n"));
   };
 
+  const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""]
+
   msg.suppressEmbeds();
-  msg.channel.send(`\`\`\`${githubMatch[3]}\n${toDisplay}\`\`\``);
+  msg.channel.send(`\`\`\`${extension[extension.length - 1]}\n${toDisplay}\`\`\``);
 
 })
