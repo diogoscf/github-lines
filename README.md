@@ -1,6 +1,7 @@
 # GitHub Lines
 
-GitHub Lines is a bot, currently only available in Discord, that highlights one or more lines when mentioned in a GitHub link.
+GitHub Lines is a bot, currently only available in Discord, that displays one or more lines when mentioned in a GitHub link.
+It also supports syntax higlighting!
 
 Example:
 
