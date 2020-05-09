@@ -31,7 +31,7 @@ function formatIndent(str) {
     };
   });
 
-  return newLines.join("\n")
+  return newLines.join("\n");
 };
 
 bot.on("message", async (msg) => {
@@ -43,6 +43,8 @@ bot.on("message", async (msg) => {
 
   const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)#L(\d+)-?L?(\d*)/i);
   if (!githubMatch) return;
+
+  msg.suppressEmbeds(true);
 
   const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}`);
   const text = await resp.text();
@@ -56,7 +58,8 @@ bot.on("message", async (msg) => {
 
   const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""]
 
-  msg.suppressEmbeds(true);
   msg.channel.send(`\`\`\`${extension[extension.length - 1]}\n${toDisplay}\`\`\``);
+
+  setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
 
 })
