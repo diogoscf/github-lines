@@ -4,7 +4,7 @@ GitHub Lines is a bot, currently only available in Discord, that highlights one 
 
 Example:
 
-![Github Lines Example](https://github.com/diogoscf/github-lines/raw/master/assets/github-lines-example.png")
+![Github Lines Example](https://github.com/diogoscf/github-lines/raw/master/assets/github-lines-example.PNG)
 
 You can add the bot to your server by clicking [this link](https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=10240&scope=bot)
 
