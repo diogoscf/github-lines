@@ -48,7 +48,6 @@ bot.on("message", async (msg) => {
   const text = await resp.text();
   const lines = text.split("\n");
   let toDisplay;
-  //matchPlac
   if (!githubMatch[4].length) {
     toDisplay = lines[parseInt(githubMatch[3], 10) - 1].trim();
   } else {
@@ -57,7 +56,7 @@ bot.on("message", async (msg) => {
 
   const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""]
 
-  msg.suppressEmbeds();
+  msg.suppressEmbeds(true);
   msg.channel.send(`\`\`\`${extension[extension.length - 1]}\n${toDisplay}\`\`\``);
 
 })
