@@ -9,6 +9,15 @@ Example:
 
 You can add the bot to your server by clicking [this link](https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=10240&scope=bot)
 
+## Commands
+
+GitHub Lines has a few commands that you can use, although no commands are necessary to display the lines. The prefix for the commands is ";"
+
+ 1. `;help` - Returns a list of commands
+ 2. `;about` - Returns some info about the bot
+ 3. `;invite` or `;topgg` - Returns the link for the bot's top.gg page, from where you can invite the bot to your server
+ 4. `;ping` - Returns the bot's latency
+
 ## Running your own
 
 To run the bot yourself, follow these simple steps:
