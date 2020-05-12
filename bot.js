@@ -2,7 +2,6 @@ process.env.NTBA_FIX_319 = 1;
 require("dotenv").config();
 
 const fetch = require("node-fetch");
-const ogscraper = require("open-graph-scraper");
 
 const DiscordBot = require("discord.js");
 const { TOKEN } = process.env;
@@ -70,7 +69,6 @@ function formatIndent(str) {
 };
 
 async function handleGithub(msg, githubMatch) {
-  msg.suppressEmbeds(true);
 
   const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}`);
   const text = await resp.text();
@@ -83,9 +81,18 @@ async function handleGithub(msg, githubMatch) {
     toDisplay = formatIndent(lines.slice(parseInt(githubMatch[3], 10) - 1, parseInt(githubMatch[4], 10)).join("\n"));
   };
 
-  const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""];
+  if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
+    msg.channel.send(
+      "Sorry but there is a 2000 character limit on Discord, and we were unable to display the desired snippet." +
+      "Please choose a smaller snippet or break it up into chunks of less than 2000 characters"
+    );
+    return;
+  }
 
-  msg.channel.send(`\`\`\`${extension[extension.length - 1]}\n${toDisplay}\`\`\``);
+  msg.suppressEmbeds(true);
+
+  const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""];
+  msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
 
   setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
 };
