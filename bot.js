@@ -169,8 +169,8 @@ async function handlePing(msg) {
 
 bot.on("ready", () => {
   bot.user.setActivity("for GitHub links", {
-      type: "WATCHING"
-    });
+    type: "WATCHING"
+  });
 });
 
 bot.on("message", async (msg) => {
@@ -192,4 +192,31 @@ bot.on("message", async (msg) => {
   if (Object.keys(COMMANDS).includes(command)) {
     COMMANDS[command](msg);
   };
+});
+
+bot.on("guildCreate", (guild) => {
+  const joinEmbed = new DiscordBot.MessageEmbed()
+    .setTitle("Thanks for adding me to your server! :heart:")
+    .setDescription(
+      "GitHub Lines runs automatically, without need for commands or configuration! " +
+      "Just send a GitHub link that mentions one or more lines and the bot will automatically respond.\n\n" +
+      "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
+      "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
+      "Have fun!"
+    )
+    //.setThumbnail("IMAGE HERE")
+
+  if (guild.systemChannel) {
+    guild.systemChannel.send(joinEmbed);
+    return;
+  };
+
+  let channel;
+  for (const c of guild.channels.cache) {
+    if (c[1].type === "text") {
+      channel = c[0];
+      break;
+    }
+  }
+  channel.send(joinEmbed);
 });
