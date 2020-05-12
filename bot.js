@@ -86,8 +86,8 @@ async function handleGithub(msg, githubMatch) {
 
   if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
     msg.channel.send(
-      "Sorry but there is a 2000 character limit on Discord, and we were unable to display the desired snippet." +
-      "Please choose a smaller snippet or break it up into chunks of less than 2000 characters"
+      "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet. " +
+      "Please choose a smaller snippet or break it up into smaller chunks"
     );
     return;
   }
