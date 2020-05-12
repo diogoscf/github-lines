@@ -81,6 +81,9 @@ async function handleGithub(msg, githubMatch) {
     toDisplay = formatIndent(lines.slice(parseInt(githubMatch[3], 10) - 1, parseInt(githubMatch[4], 10)).join("\n"));
   };
 
+  msg.suppressEmbeds(true);
+  setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
+
   if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
     msg.channel.send(
       "Sorry but there is a 2000 character limit on Discord, and we were unable to display the desired snippet." +
@@ -89,12 +92,8 @@ async function handleGithub(msg, githubMatch) {
     return;
   }
 
-  msg.suppressEmbeds(true);
-
   const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""];
   msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
-
-  setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
 };
 
 async function handleAbout(msg) {
