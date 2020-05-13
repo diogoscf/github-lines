@@ -141,7 +141,7 @@ function handleHelp(msg) {
       inline: false
     }, {
       name: "`;about`",
-      value: "Info about the bot",
+      value: 'Info about the bot',
       inline: false
     }, {
       name: "`;invite` or `;topgg`",
