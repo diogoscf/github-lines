@@ -22,7 +22,7 @@ const COMMANDS = {
 /* eslint-enable no-use-before-define */
 
 function convertMS(milliseconds) {
-  let seconds = Math.floor(milliseconds / 1000);
+  seconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(seconds / 60);
   seconds = (seconds % 60).toString();
   let hours = Math.floor(minutes / 60);
