@@ -10,7 +10,6 @@ bot.login(TOKEN);
 
 const PREFIX = ";";
 
-/* eslint-disable no-use-before-define */
 const COMMANDS = {
   help: (msg) => handleHelp(msg),
   about: (msg) => handleAbout(msg),
@@ -19,7 +18,6 @@ const COMMANDS = {
   stats: (msg) => handleAbout(msg),
   ping: (msg) => handlePing(msg)
 };
-/* eslint-enable no-use-before-define */
 
 function convertMS(milliseconds) {
   seconds = Math.floor(milliseconds / 1000);
