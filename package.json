@@ -4,7 +4,8 @@
   "description": "Discord bot to highlight lines in Github links",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "lint": "npx eslint bot.js"
   },
   "keywords": [
     "nodejs",
@@ -17,5 +18,8 @@
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.0.0"
   }
 }

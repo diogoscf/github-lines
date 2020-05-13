@@ -10,6 +10,7 @@ bot.login(TOKEN);
 
 const PREFIX = ";";
 
+/* eslint-disable no-use-before-define */
 const COMMANDS = {
   help: (msg) => handleHelp(msg),
   about: (msg) => handleAbout(msg),
@@ -18,39 +19,39 @@ const COMMANDS = {
   stats: (msg) => handleAbout(msg),
   ping: (msg) => handlePing(msg)
 };
+/* eslint-enable no-use-before-define */
 
 function convertMS(milliseconds) {
-  let days, hours, minutes, seconds;
-  seconds = Math.floor(milliseconds / 1000);
-  minutes = Math.floor(seconds / 60);
+  let seconds = Math.floor(milliseconds / 1000);
+  let minutes = Math.floor(seconds / 60);
   seconds = (seconds % 60).toString();
-  hours = Math.floor(minutes / 60);
+  let hours = Math.floor(minutes / 60);
   minutes = (minutes % 60).toString();
-  days = Math.floor(hours / 24);
+  const days = Math.floor(hours / 24);
   hours = (hours % 24).toString();
 
-  if (hours.length === 1) hours = "0" + hours;
-  if (minutes.length === 1) minutes = "0" + minutes;
-  if (seconds.length === 1) seconds = "0" + seconds;
+  if (hours.length === 1) hours = `0${hours}`;
+  if (minutes.length === 1) minutes = `0${minutes}`;
+  if (seconds.length === 1) seconds = `0${seconds}`;
 
   let dayStr = "";
   if (days > 1) {
-    dayStr = `${days} days, `
+    dayStr = `${days} days, `;
   } else if (days === 1) {
-    dayStr = "1 day, "
+    dayStr = "1 day, ";
   }
 
-  return `${dayStr}${hours}:${minutes}:${seconds}`
+  return `${dayStr}${hours}:${minutes}:${seconds}`;
 }
 
 function formatIndent(str) {
   const lines = str.replace(/\t/g, "    ").split("\n");
-  let ignored = [];
+  const ignored = [];
   let minSpaces = Infinity;
-  let newLines = [];
+  const newLines = [];
   lines.forEach((line, idx) => {
     const leadingSpaces = line.search(/\S/);
-    if (leadingSpaces == -1) {
+    if (leadingSpaces === -1) {
       ignored.push(idx);
     } else if (leadingSpaces < minSpaces) {
       minSpaces = leadingSpaces;
@@ -62,14 +63,13 @@ function formatIndent(str) {
       newLines.push(line);
     } else {
       newLines.push(line.substring(minSpaces));
-    };
+    }
   });
 
   return newLines.join("\n");
-};
+}
 
 async function handleGithub(msg, githubMatch) {
-
   const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}`);
   const text = await resp.text();
   const lines = text.split("\n");
@@ -79,7 +79,7 @@ async function handleGithub(msg, githubMatch) {
     toDisplay = lines[parseInt(githubMatch[3], 10) - 1].trim();
   } else {
     toDisplay = formatIndent(lines.slice(parseInt(githubMatch[3], 10) - 1, parseInt(githubMatch[4], 10)).join("\n"));
-  };
+  }
 
   msg.suppressEmbeds(true);
   setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
@@ -94,14 +94,14 @@ async function handleGithub(msg, githubMatch) {
 
   const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""];
   msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
-};
+}
 
 async function handleAbout(msg) {
   const botApp = await bot.fetchApplication();
   const aboutEmbed = new DiscordBot.MessageEmbed()
     .setTitle("About GitHub Lines")
     .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub link")
-    //.setThumbnail("IMAGE HERE")
+    // .setThumbnail("IMAGE HERE")
     .addFields({
       name: "**__Info__**",
       value: "\u200b",
@@ -136,7 +136,7 @@ function handleHelp(msg) {
   const helpEmbed = new DiscordBot.MessageEmbed()
     .setTitle("Help Info")
     .setDescription("GitHub Lines runs automatically, without need for configuration! Here are some commands you can use")
-    //.setThumbnail("IMAGE HERE")
+    // .setThumbnail("IMAGE HERE")
     .addFields({
       name: "**__Commands__**",
       value: "\u200b",
@@ -163,9 +163,9 @@ function handleHelp(msg) {
 }
 
 async function handlePing(msg) {
-  pingMsg = await msg.channel.send("Ping?");
+  const pingMsg = await msg.channel.send("Ping?");
   pingMsg.edit(`Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${bot.ws.ping}ms`);
-};
+}
 
 bot.on("ready", () => {
   bot.user.setActivity("for GitHub links", {
@@ -175,9 +175,9 @@ bot.on("ready", () => {
 
 bot.on("message", async (msg) => {
   // prevent replying to own messages
-  if (msg.author.id == bot.user.id) {
+  if (msg.author.id === bot.user.id) {
     return;
-  };
+  }
 
   const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)#L(\d+)-?L?(\d*)/i);
   if (githubMatch) handleGithub(msg, githubMatch);
@@ -187,11 +187,11 @@ bot.on("message", async (msg) => {
     command = msg.content.substring(`<@!${bot.user.id}>`.length).trim();
   } else if (msg.content.trim().startsWith(PREFIX)) {
     command = msg.content.substring(PREFIX.length).trim();
-  };
+  }
 
   if (Object.keys(COMMANDS).includes(command)) {
     COMMANDS[command](msg);
-  };
+  }
 });
 
 bot.on("guildCreate", (guild) => {
@@ -203,20 +203,20 @@ bot.on("guildCreate", (guild) => {
       "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
       "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
       "Have fun!"
-    )
-    //.setThumbnail("IMAGE HERE")
+    );
 
   if (guild.systemChannel) {
     guild.systemChannel.send(joinEmbed);
     return;
-  };
+  }
 
   let channel;
-  for (const c of guild.channels.cache) {
+  guild.channels.cache.forEach((c) => {
     if (c[1].type === "text") {
-      channel = c[0];
-      break;
+      [channel] = c;
+      return null;
     }
-  }
+    return null;
+  });
   channel.send(joinEmbed);
 });
