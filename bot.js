@@ -16,8 +16,11 @@ const COMMANDS = {
   about: (msg) => handleAbout(msg),
   invite: (msg) => handleTopgg(msg),
   topgg: (msg) => handleTopgg(msg),
+  vote: (msg) => handleTopgg(msg),
   stats: (msg) => handleAbout(msg),
-  ping: (msg) => handlePing(msg)
+  ping: (msg) => handlePing(msg),
+  github: (msg) => handleGithubCommand(msg),
+  source: (msg) => handleGithubCommand(msg)
 };
 /* eslint-enable no-use-before-define */
 
@@ -129,7 +132,11 @@ async function handleAbout(msg) {
 }
 
 function handleTopgg(msg) {
-  msg.reply("https://top.gg/bot/708282735227174922");
+  msg.channel.send("We appreciate votes :heart: https://top.gg/bot/708282735227174922");
+}
+
+function handleGithubCommand(msg) {
+  msg.channel.send("Stars are appreciated :heart: https://github.com/diogoscf/github-lines");
 }
 
 function handleHelp(msg) {
@@ -152,6 +159,10 @@ function handleHelp(msg) {
     }, {
       name: "`;help`",
       value: "Return this message",
+      inline: false
+    }, {
+      name: "`;github` or `;source`",
+      value: "Link GitHub source",
       inline: false
     }, {
       name: "`;ping`",
