@@ -36,7 +36,7 @@ function convertMS(milliseconds) {
   if (days > 1) {
     dayStr = `${days} days, `;
   } else if (days === 1) {
-    dayStr = "1 day, ";
+    dayStr = '1 day, ';
   }
 
   return `${dayStr}${hours}:${minutes}:${seconds}`;
