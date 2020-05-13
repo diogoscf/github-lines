@@ -127,7 +127,7 @@ async function handleAbout(msg) {
 }
 
 function handleTopgg(msg) {
-  msg.reply("https://top.gg/bot/708282735227174922");
+  msg.reply('https://top.gg/bot/708282735227174922');
 }
 
 function handleHelp(msg) {
@@ -150,11 +150,11 @@ function handleHelp(msg) {
     }, {
       name: "`;help`",
       value: "Return this message",
-      inline: false
+      inline: false,
     }, {
       name: "`;ping`",
       value: "Check bot latency",
-      inline: false
+      inline: false,
     });
 
   msg.channel.send(helpEmbed);
