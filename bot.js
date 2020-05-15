@@ -14,7 +14,7 @@ const PREFIX = ";";
 const COMMANDS = {
   help: (msg) => handleHelp(msg),
   about: (msg) => handleAbout(msg),
-  invite: (msg) => handleTopgg(msg),
+  invite: (msg) => /*handleTopgg(msg)*/msg.reply("https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=10240&scope=bot"),
   topgg: (msg) => handleTopgg(msg),
   vote: (msg) => handleTopgg(msg),
   stats: (msg) => handleAbout(msg),
