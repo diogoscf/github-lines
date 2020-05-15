@@ -72,16 +72,32 @@ function formatIndent(str) {
   return newLines.join("\n");
 }
 
-async function handleGithub(msg, githubMatch) {
-  const resp = await fetch(`https://raw.githubusercontent.com/${githubMatch[1]}/${githubMatch[2]}`);
-  const text = await resp.text();
-  const lines = text.split("\n");
+async function handleMatch(msg, match, type) {
+  let lines;
+  if (type === "GitHub") {
+    const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}`);
+    const text = await resp.text();
+    lines = text.split("\n");
+  } else if (type == "Gitlab") {
+    const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}`);
+    const text = await resp.text();
+    lines = text.split("\n");
+  } else {
+    console.log("Wrong type sent to handleMatch");
+    return;
+  }
 
   let toDisplay;
-  if (!githubMatch[4].length) {
-    toDisplay = lines[parseInt(githubMatch[3], 10) - 1].trim();
+  if (!match[4].length || match[3] === match[4]) {
+    if (parseInt(match[3], 10) > lines.length || parseInt(match[3], 10) === 0) return;
+    toDisplay = lines[parseInt(match[3], 10) - 1].trim();
   } else {
-    toDisplay = formatIndent(lines.slice(parseInt(githubMatch[3], 10) - 1, parseInt(githubMatch[4], 10)).join("\n"));
+    let start = parseInt(match[3], 10);
+    let end = parseInt(match[4], 10);
+    if (end < start) [start, end] = [end, start];
+    if (end > lines.length) end = lines.length;
+    if (start === 0) start = 1;
+    toDisplay = formatIndent(lines.slice(start - 1, end).join("\n"));
   }
 
   msg.suppressEmbeds(true);
@@ -95,7 +111,7 @@ async function handleGithub(msg, githubMatch) {
     return;
   }
 
-  const extension = githubMatch[2].includes(".") ? githubMatch[2].split(".") : [""];
+  const extension = match[2].includes(".") ? match[2].split(".") : [""];
   msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
 }
 
@@ -191,7 +207,10 @@ bot.on("message", async (msg) => {
   }
 
   const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)#L(\d+)-?L?(\d*)/i);
-  if (githubMatch) handleGithub(msg, githubMatch);
+  if (githubMatch) handleMatch(msg, githubMatch, "GitHub");
+
+  const gitlabMatch = msg.content.match(/https?:\/\/gitlab.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)#L(\d+)-?(\d*)/i);
+  if (gitlabMatch) handleMatch(msg, gitlabMatch, "Gitlab");
 
   let command = "INVALID-COMMAND";
   if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
