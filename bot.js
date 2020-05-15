@@ -78,7 +78,7 @@ async function handleMatch(msg, match, type) {
     const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}`);
     const text = await resp.text();
     lines = text.split("\n");
-  } else if (type == "Gitlab") {
+  } else if (type === "Gitlab") {
     const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}`);
     const text = await resp.text();
     lines = text.split("\n");
@@ -119,13 +119,9 @@ async function handleAbout(msg) {
   const botApp = await bot.fetchApplication();
   const aboutEmbed = new DiscordBot.MessageEmbed()
     .setTitle("About GitHub Lines")
-    .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub link")
+    .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or Gitlab) link")
     // .setThumbnail("IMAGE HERE")
     .addFields({
-      name: "**__Info__**",
-      value: "\u200b",
-      inline: false
-    }, {
       name: "Guild Count",
       value: bot.guilds.cache.size,
       inline: true
@@ -229,7 +225,7 @@ bot.on("guildCreate", (guild) => {
     .setTitle("Thanks for adding me to your server! :heart:")
     .setDescription(
       "GitHub Lines runs automatically, without need for commands or configuration! " +
-      "Just send a GitHub link that mentions one or more lines and the bot will automatically respond.\n\n" +
+      "Just send a GitHub (or Gitlab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
       "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
       "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
       "Have fun!"
