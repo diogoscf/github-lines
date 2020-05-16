@@ -14,7 +14,7 @@ const PREFIX = ";";
 const COMMANDS = {
   help: (msg) => handleHelp(msg),
   about: (msg) => handleAbout(msg),
-  invite: (msg) => /*handleTopgg(msg)*/msg.reply("https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=10240&scope=bot"),
+  invite: (msg) => /* handleTopgg(msg) */msg.reply("https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=10240&scope=bot"),
   topgg: (msg) => handleTopgg(msg),
   vote: (msg) => handleTopgg(msg),
   stats: (msg) => handleAbout(msg),
@@ -75,12 +75,24 @@ function formatIndent(str) {
 async function handleMatch(msg, match, type) {
   let lines;
   if (type === "GitHub") {
-    const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}`);
+    const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`);
     const text = await resp.text();
     lines = text.split("\n");
-  } else if (type === "Gitlab") {
-    const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}`);
+  } else if (type === "GitLab") {
+    const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}/${match[3]}`);
     const text = await resp.text();
+    lines = text.split("\n");
+  } else if (type === "Gist") {
+    match[3] = match[3].replace("-", "."); // eslint-disable-line no-param-reassign
+    let text;
+    if (match[2].length) {
+      const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${match[3]}`);
+      text = await resp.text();
+    } else {
+      const resp = await fetch(`https://api.github.com/gists/${match[1].split("/")[1]}`);
+      const json = await resp.json();
+      text = json.files[match[3]].content;
+    }
     lines = text.split("\n");
   } else {
     console.log("Wrong type sent to handleMatch");
@@ -88,12 +100,12 @@ async function handleMatch(msg, match, type) {
   }
 
   let toDisplay;
-  if (!match[4].length || match[3] === match[4]) {
-    if (parseInt(match[3], 10) > lines.length || parseInt(match[3], 10) === 0) return;
-    toDisplay = lines[parseInt(match[3], 10) - 1].trim();
+  if (!match[5].length || match[4] === match[5]) {
+    if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return;
+    toDisplay = lines[parseInt(match[4], 10) - 1].trim();
   } else {
-    let start = parseInt(match[3], 10);
-    let end = parseInt(match[4], 10);
+    let start = parseInt(match[4], 10);
+    let end = parseInt(match[5], 10);
     if (end < start) [start, end] = [end, start];
     if (end > lines.length) end = lines.length;
     if (start === 0) start = 1;
@@ -111,7 +123,7 @@ async function handleMatch(msg, match, type) {
     return;
   }
 
-  const extension = match[2].includes(".") ? match[2].split(".") : [""];
+  const extension = match[3].includes(".") ? match[3].split(".") : [""];
   msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
 }
 
@@ -119,7 +131,7 @@ async function handleAbout(msg) {
   const botApp = await bot.fetchApplication();
   const aboutEmbed = new DiscordBot.MessageEmbed()
     .setTitle("About GitHub Lines")
-    .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or Gitlab) link")
+    .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or GitLab) link")
     // .setThumbnail("IMAGE HERE")
     .addFields({
       name: "Guild Count",
@@ -202,11 +214,14 @@ bot.on("message", async (msg) => {
     return;
   }
 
-  const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)#L(\d+)-?L?(\d*)/i);
+  const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/i);
   if (githubMatch) handleMatch(msg, githubMatch, "GitHub");
 
-  const gitlabMatch = msg.content.match(/https?:\/\/gitlab.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)#L(\d+)-?(\d*)/i);
-  if (gitlabMatch) handleMatch(msg, gitlabMatch, "Gitlab");
+  const gitlabMatch = msg.content.match(/https?:\/\/gitlab.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/i);
+  if (gitlabMatch) handleMatch(msg, gitlabMatch, "GitLab");
+
+  const gistMatch = msg.content.match(/https?:\/\/gist.github.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)#file-(.+)-L(\d+)-?L?(\d*)/i);
+  if (gistMatch) handleMatch(msg, gistMatch, "Gist");
 
   let command = "INVALID-COMMAND";
   if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
@@ -225,7 +240,7 @@ bot.on("guildCreate", (guild) => {
     .setTitle("Thanks for adding me to your server! :heart:")
     .setDescription(
       "GitHub Lines runs automatically, without need for commands or configuration! " +
-      "Just send a GitHub (or Gitlab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
+      "Just send a GitHub (or GitLab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
       "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
       "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
       "Have fun!"
