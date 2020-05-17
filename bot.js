@@ -214,13 +214,13 @@ bot.on("message", async (msg) => {
     return;
   }
 
-  const githubMatch = msg.content.match(/https?:\/\/github.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/i);
+  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/);
   if (githubMatch) handleMatch(msg, githubMatch, "GitHub");
 
-  const gitlabMatch = msg.content.match(/https?:\/\/gitlab.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/i);
+  const gitlabMatch = msg.content.match(/https?:\/\/gitlab\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/);
   if (gitlabMatch) handleMatch(msg, gitlabMatch, "GitLab");
 
-  const gistMatch = msg.content.match(/https?:\/\/gist.github.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)#file-(.+)-L(\d+)-?L?(\d*)/i);
+  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)-?L?(\d*)/);
   if (gistMatch) handleMatch(msg, gistMatch, "Gist");
 
   let command = "INVALID-COMMAND";
