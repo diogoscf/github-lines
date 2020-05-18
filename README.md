@@ -1,3 +1,7 @@
+[![inviteme](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA)](https://top.gg/bot/708282735227174922)
+[![Up Status](https://top.gg/api/widget/status/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
+[![Servers](https://top.gg/api/widget/servers/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
+
 # GitHub Lines
 
 GitHub Lines is a minimal and non-intrusive Discord bot that displays one or more lines when mentioned in a GitHub (or GitLab) link.
