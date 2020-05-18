@@ -9,7 +9,7 @@ const bot = new DiscordBot.Client();
 bot.login(TOKEN);
 
 const DBL = require("dblapi.js");
-const dbl = new DBL(TOPGG, bot);
+const dbl = new DBL(TOPGG, bot); // eslint-disable-line no-unused-vars
 
 const PREFIX = ";";
 
@@ -115,8 +115,8 @@ async function handleMatch(msg, match, type) {
     toDisplay = formatIndent(lines.slice(start - 1, end).join("\n"));
   }
 
-  msg.suppressEmbeds(true);
-  setTimeout(() => msg.suppressEmbeds(true), 2000); // make sure to suppress the embed
+  msg.suppressEmbeds(true).catch();
+  setTimeout(() => msg.suppressEmbeds(true).catch(), 2000); // make sure to suppress the embed
 
   if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
     msg.channel.send(
