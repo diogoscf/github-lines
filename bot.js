@@ -4,9 +4,12 @@ require("dotenv").config();
 const fetch = require("node-fetch");
 
 const DiscordBot = require("discord.js");
-const { TOKEN } = process.env;
+const { TOKEN, TOPGG } = process.env;
 const bot = new DiscordBot.Client();
 bot.login(TOKEN);
+
+const DBL = require("dblapi.js");
+const dbl = new DBL(TOPGG, bot);
 
 const PREFIX = ";";
 
