@@ -1,6 +1,7 @@
 [![inviteme](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA)](https://top.gg/bot/708282735227174922)
 [![Up Status](https://top.gg/api/widget/status/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
 [![Servers](https://top.gg/api/widget/servers/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
+[![TravisCI](https://travis-ci.com/diogoscf/github-lines.svg?branch=master)](https://travis-ci.com/diogoscf/github-lines)
 
 # GitHub Lines
 
