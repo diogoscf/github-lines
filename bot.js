@@ -179,20 +179,16 @@ function handleHelp() {
     .setDescription("GitHub Lines runs automatically, without need for configuration! Here are some commands you can use")
     // .setThumbnail("IMAGE HERE")
     .addFields({
-      name: "**__Commands__**",
-      value: "\u200b",
-      inline: false
-    }, {
-      name: "`;about`",
+      name: "`;about` or `;stats`",
       value: "Info about the bot",
       inline: false
     }, {
-      name: "`;invite` or `;topgg`",
+      name: "`;invite`, `;vote` or `;topgg`",
       value: "Link to the bot's top.gg page",
       inline: false
     }, {
       name: "`;help`",
-      value: "Return this message",
+      value: "Displays this message",
       inline: false
     }, {
       name: "`;github` or `;source`",
