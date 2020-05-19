@@ -17,15 +17,15 @@ const PREFIX = ";";
 
 /* eslint-disable no-use-before-define */
 const COMMANDS = {
-  help: (msg) => handleHelp(),
-  about: (msg) => handleAbout(),
-  invite: (msg) => handleTopgg(),
-  topgg: (msg) => handleTopgg(),
-  vote: (msg) => handleTopgg(),
-  stats: (msg) => handleAbout(),
+  help: () => handleHelp(),
+  about: () => handleAbout(),
+  invite: () => handleTopgg(),
+  topgg: () => handleTopgg(),
+  vote: () => handleTopgg(),
+  stats: () => handleAbout(),
   ping: (msg) => handlePing(msg),
-  github: (msg) => handleGithubCommand(),
-  source: (msg) => handleGithubCommand()
+  github: () => handleGithubCommand(),
+  source: () => handleGithubCommand()
 };
 /* eslint-enable no-use-before-define */
 
@@ -101,12 +101,12 @@ async function handleMatch(msg, match, type) {
     lines = text.split("\n");
   } else {
     console.log("Wrong type sent to handleMatch");
-    return;
+    return null;
   }
 
   let toDisplay;
   if (!match[5].length || match[4] === match[5]) {
-    if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return;
+    if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return null;
     toDisplay = lines[parseInt(match[4], 10) - 1].trim();
   } else {
     let start = parseInt(match[4], 10);
@@ -214,7 +214,6 @@ async function handlePing(msg) {
 }
 
 async function handleMessage(msg) {
-
   let command = null;
   if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
     command = msg.content.substring(`<@!${bot.user.id}>`.length).trim();
@@ -249,7 +248,6 @@ async function handleMessage(msg) {
 }
 
 bot.on("ready", () => {
-  console.log("READY!")
   bot.user.setActivity("for GitHub links", {
     type: "WATCHING"
   });
@@ -259,10 +257,10 @@ bot.on("message", async (msg) => {
   if (msg.author.id === bot.user.id) {
     return;
   }
-  botMsg = await handleMessage(msg);
+  const botMsg = await handleMessage(msg);
   if (botMsg) {
     msg.channel.send(botMsg);
-  };
+  }
 });
 
 bot.on("guildCreate", (guild) => {

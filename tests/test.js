@@ -68,3 +68,5 @@ describe("Test snippet printing", function () {
 })
 
 bot.on("ready", () => run())
+
+setTimeout(() => bot.destroy(), 10000); // 10s should be enough
