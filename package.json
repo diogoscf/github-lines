@@ -5,6 +5,7 @@
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
+    "test": "mocha tests/test.js --delay",
     "lint": "npx eslint bot.js"
   },
   "keywords": [
@@ -21,6 +22,8 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "eslint": "^7.0.0"
+    "chai": "^4.2.0",
+    "eslint": "^7.0.0",
+    "mocha": "^7.1.2"
   }
 }

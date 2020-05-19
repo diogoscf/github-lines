@@ -9,21 +9,23 @@ const bot = new DiscordBot.Client();
 bot.login(TOKEN);
 
 const DBL = require("dblapi.js");
-const dbl = new DBL(TOPGG, bot); // eslint-disable-line no-unused-vars
+if (TOPGG) {
+  const dbl = new DBL(TOPGG, bot); // eslint-disable-line no-unused-vars
+}
 
 const PREFIX = ";";
 
 /* eslint-disable no-use-before-define */
 const COMMANDS = {
-  help: (msg) => handleHelp(msg),
-  about: (msg) => handleAbout(msg),
-  invite: (msg) => handleTopgg(msg),
-  topgg: (msg) => handleTopgg(msg),
-  vote: (msg) => handleTopgg(msg),
-  stats: (msg) => handleAbout(msg),
+  help: (msg) => handleHelp(),
+  about: (msg) => handleAbout(),
+  invite: (msg) => handleTopgg(),
+  topgg: (msg) => handleTopgg(),
+  vote: (msg) => handleTopgg(),
+  stats: (msg) => handleAbout(),
   ping: (msg) => handlePing(msg),
-  github: (msg) => handleGithubCommand(msg),
-  source: (msg) => handleGithubCommand(msg)
+  github: (msg) => handleGithubCommand(),
+  source: (msg) => handleGithubCommand()
 };
 /* eslint-enable no-use-before-define */
 
@@ -86,7 +88,7 @@ async function handleMatch(msg, match, type) {
     const text = await resp.text();
     lines = text.split("\n");
   } else if (type === "Gist") {
-    match[3] = match[3].replace("-", "."); // eslint-disable-line no-param-reassign
+    match[3] = match[3].replace(/-([^-]*)$/, ".$1"); // eslint-disable-line no-param-reassign
     let text;
     if (match[2].length) {
       const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${match[3]}`);
@@ -119,19 +121,20 @@ async function handleMatch(msg, match, type) {
   setTimeout(() => msg.suppressEmbeds(true).catch(), 2000); // make sure to suppress the embed
 
   if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
-    msg.channel.send(
-      "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet. " +
-      "Please choose a smaller snippet or break it up into smaller chunks"
-    );
-    return;
+    return "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet. " +
+      "Please choose a smaller snippet or break it up into smaller chunks";
   }
 
   const extension = match[3].includes(".") ? match[3].split(".") : [""];
-  msg.channel.send(`\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``);
+  return `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``;
 }
 
-async function handleAbout(msg) {
+async function handleAbout() {
   const botApp = await bot.fetchApplication();
+  let userCount = 0;
+  bot.guilds.cache.forEach((guild) => {
+    userCount += guild.memberCount;
+  });
   const aboutEmbed = new DiscordBot.MessageEmbed()
     .setTitle("About GitHub Lines")
     .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or GitLab) link")
@@ -142,7 +145,7 @@ async function handleAbout(msg) {
       inline: true
     }, {
       name: "User Count",
-      value: bot.users.cache.size,
+      value: userCount,
       inline: true
     }, {
       name: "Uptime",
@@ -152,21 +155,25 @@ async function handleAbout(msg) {
       name: "Latency",
       value: `${bot.ws.ping}ms`,
       inline: true
+    }, {
+      name: "Owner",
+      value: botApp.owner.tag,
+      inline: true
     })
-    .setFooter(`Made by ${botApp.owner.tag}`, botApp.owner.avatarURL());
+    .setFooter("Made by diogoscf#7418", "https://cdn.discordapp.com/avatars/404599570090164224/04b80f9e7dd9933daedb6cbf504ef29c.webp");
 
-  msg.channel.send(aboutEmbed);
+  return aboutEmbed;
 }
 
-function handleTopgg(msg) {
-  msg.channel.send("We appreciate votes :heart: https://top.gg/bot/708282735227174922");
+function handleTopgg() {
+  return "We appreciate votes :heart: https://top.gg/bot/708282735227174922";
 }
 
-function handleGithubCommand(msg) {
-  msg.channel.send("Stars are appreciated :heart: https://github.com/diogoscf/github-lines");
+function handleGithubCommand() {
+  return "Stars are appreciated :heart: https://github.com/diogoscf/github-lines";
 }
 
-function handleHelp(msg) {
+function handleHelp() {
   const helpEmbed = new DiscordBot.MessageEmbed()
     .setTitle("Help Info")
     .setDescription("GitHub Lines runs automatically, without need for configuration! Here are some commands you can use")
@@ -197,36 +204,18 @@ function handleHelp(msg) {
       inline: false
     });
 
-  msg.channel.send(helpEmbed);
+  return helpEmbed;
 }
 
 async function handlePing(msg) {
   const pingMsg = await msg.channel.send("Ping?");
   pingMsg.edit(`Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${bot.ws.ping}ms`);
+  return null;
 }
 
-bot.on("ready", () => {
-  bot.user.setActivity("for GitHub links", {
-    type: "WATCHING"
-  });
-});
+async function handleMessage(msg) {
 
-bot.on("message", async (msg) => {
-  // prevent replying to own messages
-  if (msg.author.id === bot.user.id) {
-    return;
-  }
-
-  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/);
-  if (githubMatch) handleMatch(msg, githubMatch, "GitHub");
-
-  const gitlabMatch = msg.content.match(/https?:\/\/gitlab\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/);
-  if (gitlabMatch) handleMatch(msg, gitlabMatch, "GitLab");
-
-  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)-?L?(\d*)/);
-  if (gistMatch) handleMatch(msg, gistMatch, "Gist");
-
-  let command = "INVALID-COMMAND";
+  let command = null;
   if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
     command = msg.content.substring(`<@!${bot.user.id}>`.length).trim();
   } else if (msg.content.trim().startsWith(PREFIX)) {
@@ -234,8 +223,46 @@ bot.on("message", async (msg) => {
   }
 
   if (Object.keys(COMMANDS).includes(command)) {
-    COMMANDS[command](msg);
+    const botMsg = await COMMANDS[command](msg);
+    return botMsg;
   }
+
+  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/);
+  if (githubMatch) {
+    const botMsg = await handleMatch(msg, githubMatch, "GitHub");
+    return botMsg;
+  }
+
+  const gitlabMatch = msg.content.match(/https?:\/\/gitlab\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/);
+  if (gitlabMatch) {
+    const botMsg = await handleMatch(msg, gitlabMatch, "GitLab");
+    return botMsg;
+  }
+
+  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)-?L?(\d*)/);
+  if (gistMatch) {
+    const botMsg = await handleMatch(msg, gistMatch, "Gist");
+    return botMsg;
+  }
+
+  return null;
+}
+
+bot.on("ready", () => {
+  console.log("READY!")
+  bot.user.setActivity("for GitHub links", {
+    type: "WATCHING"
+  });
+});
+
+bot.on("message", async (msg) => {
+  if (msg.author.id === bot.user.id) {
+    return;
+  }
+  botMsg = await handleMessage(msg);
+  if (botMsg) {
+    msg.channel.send(botMsg);
+  };
 });
 
 bot.on("guildCreate", (guild) => {
@@ -264,3 +291,7 @@ bot.on("guildCreate", (guild) => {
   });
   channel.send(joinEmbed);
 });
+
+// exports for testing
+exports.handleMessage = handleMessage;
+exports.bot = bot;
