@@ -114,6 +114,10 @@ async function handleMatch(msg, match, type) {
     if (end < start) [start, end] = [end, start];
     if (end > lines.length) end = lines.length;
     if (start === 0) start = 1;
+    if (end - start > 50) {
+      return "Sorry, but to prevent spam, we limit the number of lines displayed at 50. " +
+        "Please choose a smaller snippet or break it up into smaller chunks";
+    }
     toDisplay = formatIndent(lines.slice(start - 1, end).join("\n"));
   }
 
