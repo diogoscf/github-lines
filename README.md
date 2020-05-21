@@ -29,7 +29,7 @@ GitHub Lines has a few commands that you can use, although no commands are neces
 To run the bot yourself, follow these simple steps:
 
  1. Clone the repo (`git clone https://github.com/diogoscf/github-lines.git`)
- 2. Copy `.env.example` into `.env` and paste your Discord bot token (obtain one [here](https://discord.com/developers/applications/)) after `TOKEN=`
+ 2. Copy `.env.example` into `.env` and paste your Discord bot token (obtain one [here](https://discord.com/developers/applications/)) after `DISCORD_TOKEN=`
  3. Run `npm install`
  4. Run `npm start`
 
