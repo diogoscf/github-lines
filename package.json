@@ -25,7 +25,8 @@
     "dblapi.js": "^2.4.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "prismajs": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -4,13 +4,19 @@ require("dotenv").config();
 const fetch = require("node-fetch");
 
 const DiscordBot = require("discord.js");
-const { TOKEN, TOPGG } = process.env;
+const { DISCORD_TOKEN, TOPGG, PRISMA_TOKEN } = process.env;
 const bot = new DiscordBot.Client();
-bot.login(TOKEN);
+bot.login(DISCORD_TOKEN);
 
 const DBL = require("dblapi.js");
 if (TOPGG) {
   const dbl = new DBL(TOPGG, bot); // eslint-disable-line no-unused-vars
+}
+
+const Prismalytics = require("prismajs");
+let analytics = null;
+if (PRISMA_TOKEN) {
+  analytics = new Prismalytics(PRISMA_TOKEN);
 }
 
 const PREFIX = ";";
@@ -223,6 +229,7 @@ async function handleMessage(msg) {
 
   if (Object.keys(COMMANDS).includes(command)) {
     const botMsg = await COMMANDS[command](msg);
+    if (analytics) analytics.send(msg);
     return botMsg;
   }
 
