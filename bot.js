@@ -261,7 +261,7 @@ bot.on("ready", () => {
 });
 
 bot.on("message", async (msg) => {
-  if (message.author.bot) {
+  if (msg.author.bot) {
     return;
   }
   const botMsg = await handleMessage(msg);
