@@ -113,7 +113,7 @@ async function handleMatch(msg, match, type) {
   let toDisplay;
   if (!match[5].length || match[4] === match[5]) {
     if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return null;
-    toDisplay = lines[parseInt(match[4], 10) - 1].trim();
+    toDisplay = lines[parseInt(match[4], 10) - 1].trim().replace(/``/g, "`\u200b`");
   } else {
     let start = parseInt(match[4], 10);
     let end = parseInt(match[5], 10);
@@ -124,7 +124,7 @@ async function handleMatch(msg, match, type) {
       return "Sorry, but to prevent spam, we limit the number of lines displayed at 50. " +
         "Please choose a smaller snippet or break it up into smaller chunks";
     }
-    toDisplay = formatIndent(lines.slice(start - 1, end).join("\n"));
+    toDisplay = formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`");
   }
 
   msg.suppressEmbeds(true).catch();
@@ -136,7 +136,7 @@ async function handleMatch(msg, match, type) {
   }
 
   const extension = match[3].includes(".") ? match[3].split(".") : [""];
-  return `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\`\`\``;
+  return `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
 }
 
 async function handleAbout() {
