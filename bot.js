@@ -135,6 +135,12 @@ async function handleMatch(msg, match, type) {
       "Please choose a smaller snippet or break it up into smaller chunks";
   }
 
+  if (analytics) {
+    const bogusMsg = msg;
+    bogusMsg.content = ";link";
+    analytics.send(bogusMsg);
+  }
+
   const extension = match[3].includes(".") ? match[3].split(".") : [""];
   return `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
 }
