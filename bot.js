@@ -244,7 +244,7 @@ async function handleMessage(msg) {
     return botMsg;
   }
 
-  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)-?L?(\d*)/);
+  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)[-~]?L?(\d*)/);
   if (githubMatch) {
     const botMsg = await handleMatch(msg, githubMatch, "GitHub");
     return botMsg;
@@ -256,7 +256,7 @@ async function handleMessage(msg) {
     return botMsg;
   }
 
-  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)-?L?(\d*)/);
+  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)[-~]?L?(\d*)/);
   if (gistMatch) {
     const botMsg = await handleMatch(msg, gistMatch, "Gist");
     return botMsg;

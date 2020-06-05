@@ -30,6 +30,12 @@ describe("Test snippet printing", function () {
     expect(snippet).to.equal("```\nThe MIT License\n\nCopyright (c) 2020 Diogo S.C. Fernandes (@diogoscf)\n```")
   });
 
+  it("GitHub multi-line with tilde", async function () {
+    const url = "https://github.com/diogoscf/github-lines/blob/master/LICENSE#L1~L3";
+    const snippet = await handleMessage(new MockMessage(url))
+    expect(snippet).to.equal("```\nThe MIT License\n\nCopyright (c) 2020 Diogo S.C. Fernandes (@diogoscf)\n```")
+  });
+
   it("Gist single line", async function () {
     const url = "https://gist.github.com/diogoscf/6878f91e9d5250f0a89518f0301ae1a4#file-bot-test-js-L1";
     const snippet = await handleMessage(new MockMessage(url))
@@ -50,6 +56,12 @@ describe("Test snippet printing", function () {
 
   it("Gist revision multi-line", async function () {
     const url = "https://gist.github.com/diogoscf/6878f91e9d5250f0a89518f0301ae1a4/3a556c88296c5ba796a8f464f3838970d689c9fd#file-bot-test-py-L1-L2";
+    const snippet = await handleMessage(new MockMessage(url))
+    expect(snippet).to.equal("```py\nprint(\"test\")\nprint(\"test2\")\n```")
+  });
+
+  it("Gist revision multi-line with tilde", async function () {
+    const url = "https://gist.github.com/diogoscf/6878f91e9d5250f0a89518f0301ae1a4/3a556c88296c5ba796a8f464f3838970d689c9fd#file-bot-test-py-L1~L2";
     const snippet = await handleMessage(new MockMessage(url))
     expect(snippet).to.equal("```py\nprint(\"test\")\nprint(\"test2\")\n```")
   });
