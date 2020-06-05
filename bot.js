@@ -27,6 +27,7 @@ const COMMANDS = {
   about: () => handleAbout(),
   invite: () => handleTopgg(),
   topgg: () => handleTopgg(),
+  botsgg: () => "We appreciate it! :heart: https://discord.bots.gg/bots/708282735227174922",
   vote: () => handleTopgg(),
   stats: () => handleAbout(),
   ping: (msg) => handlePing(msg),

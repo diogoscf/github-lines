@@ -21,8 +21,9 @@ GitHub Lines has a few commands that you can use, although no commands are neces
  1. `;help` - Returns a list of commands
  2. `;about` or `;stats` - Returns some info about the bot
  3. `;invite`, `;vote` or `;topgg` - Returns the link for the bot's top.gg page, from where you can invite the bot to your server
- 4. `;ping` - Returns the bot's latency
- 5. `;github` or `;source` - Returns the bot's source GitHub repo
+ 4. `;botsgg` - Returns the link for the bot's discord.bots.gg page, from where you can invite the bot to your server
+ 5. `;ping` - Returns the bot's latency
+ 6. `;github` or `;source` - Returns the bot's source GitHub repo
 
 ## Running your own
 
