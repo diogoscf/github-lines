@@ -204,7 +204,7 @@ function handleHelp() {
       value: "Link to the bot's top.gg page",
       inline: false
     }, {
-      name: "`botsgg`",
+      name: "`;botsgg`",
       value: "Link to the bot's discord.bots.gg page",
       inline: false
     }, {
