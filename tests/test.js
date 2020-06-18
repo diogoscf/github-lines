@@ -77,6 +77,13 @@ describe("Test snippet printing", function () {
     const snippet = await handleMessage(new MockMessage(url))
     expect(snippet).to.equal("```txt\nLorem ipsum\nidk what I'm doing\n```")
   });
+
+  it("Multi-snippet", async function () {
+    const msg = "https://gitlab.com/diogoscf/github-lines-test/-/blob/master/test.txt#L1-2" +
+      "https://gist.github.com/diogoscf/6878f91e9d5250f0a89518f0301ae1a4#file-bot-test-js-L1";
+    const snippet = await handleMessage(new MockMessage(msg))
+    expect(snippet).to.equal("```txt\nLorem ipsum\nidk what I'm doing\n```\n```js\nconsole.log(\"hello-rev\")\n```")
+  });
 })
 
 bot.on("ready", () => run())

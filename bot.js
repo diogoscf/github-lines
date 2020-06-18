@@ -4,7 +4,12 @@ require("dotenv").config();
 const fetch = require("node-fetch");
 
 const DiscordBot = require("discord.js");
-const { DISCORD_TOKEN, TOPGG, PRISMA_TOKEN } = process.env;
+const {
+  DISCORD_TOKEN,
+  TOPGG,
+  PRISMA_TOKEN,
+  GITHUB_TOKEN
+} = process.env;
 const bot = new DiscordBot.Client();
 bot.login(DISCORD_TOKEN);
 
@@ -17,6 +22,11 @@ const Prismalytics = require("prismajs");
 let analytics = null;
 if (PRISMA_TOKEN) {
   analytics = new Prismalytics(PRISMA_TOKEN);
+}
+
+const authHeaders = {};
+if (GITHUB_TOKEN) {
+  authHeaders.Authorization = `token ${GITHUB_TOKEN}`;
 }
 
 const PREFIX = ";";
@@ -88,10 +98,16 @@ async function handleMatch(msg, match, type) {
   let lines;
   if (type === "GitHub") {
     const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`);
+    if (!resp.ok) {
+      return null;
+    }
     const text = await resp.text();
     lines = text.split("\n");
   } else if (type === "GitLab") {
     const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}/${match[3]}`);
+    if (!resp.ok) {
+      return null;
+    }
     const text = await resp.text();
     lines = text.split("\n");
   } else if (type === "Gist") {
@@ -99,9 +115,18 @@ async function handleMatch(msg, match, type) {
     let text;
     if (match[2].length) {
       const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${match[3]}`);
+      if (!resp.ok) {
+        return null;
+      }
       text = await resp.text();
     } else {
-      const resp = await fetch(`https://api.github.com/gists/${match[1].split("/")[1]}`);
+      const resp = await fetch(`https://api.github.com/gists/${match[1].split("/")[1]}`, {
+        method: "GET",
+        headers: authHeaders
+      });
+      if (!resp.ok) {
+        return null;
+      }
       const json = await resp.json();
       text = json.files[match[3]].content;
     }
@@ -112,38 +137,24 @@ async function handleMatch(msg, match, type) {
   }
 
   let toDisplay;
+  let lineLength;
   if (!match[5].length || match[4] === match[5]) {
     if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return null;
     toDisplay = lines[parseInt(match[4], 10) - 1].trim().replace(/``/g, "`\u200b`");
+    lineLength = 1;
   } else {
     let start = parseInt(match[4], 10);
     let end = parseInt(match[5], 10);
     if (end < start) [start, end] = [end, start];
     if (end > lines.length) end = lines.length;
     if (start === 0) start = 1;
-    if (end - start > 50) {
-      return "Sorry, but to prevent spam, we limit the number of lines displayed at 50. " +
-        "Please choose a smaller snippet or break it up into smaller chunks";
-    }
+    lineLength = end - start;
     toDisplay = formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`");
   }
 
-  msg.suppressEmbeds(true).catch();
-  setTimeout(() => msg.suppressEmbeds(true).catch(), 2000); // make sure to suppress the embed
-
-  if (toDisplay.length >= 1990) { // not 2000 because of markdown characters and stuff
-    return "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet. " +
-      "Please choose a smaller snippet or break it up into smaller chunks";
-  }
-
-  if (analytics) {
-    const bogusMsg = msg;
-    bogusMsg.content = ";link";
-    analytics.send(bogusMsg);
-  }
-
   const extension = match[3].includes(".") ? match[3].split(".") : [""];
-  return `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
+  const message = `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
+  return [message, lineLength];
 }
 
 async function handleAbout() {
@@ -244,25 +255,58 @@ async function handleMessage(msg) {
     return botMsg;
   }
 
-  const githubMatch = msg.content.match(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+)\/(.+)#L(\d+)[-~]?L?(\d*)/);
+  const returned = [];
+  let totalLines = 0;
+
+  const githubMatch = msg.content.matchAll(/https?:\/\/github\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/blob\/(.+?)\/(.+?)#L(\d+)[-~]?L?(\d*)/g);
   if (githubMatch) {
-    const botMsg = await handleMatch(msg, githubMatch, "GitHub");
-    return botMsg;
+    for (const match of githubMatch) {
+      returned.push(handleMatch(msg, match, "GitHub"));
+    }
   }
 
-  const gitlabMatch = msg.content.match(/https?:\/\/gitlab\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+)\/(.+)#L(\d+)-?(\d*)/);
+  const gitlabMatch = msg.content.matchAll(/https?:\/\/gitlab\.com\/([a-zA-Z0-9-_]+\/[A-Za-z0-9_.-]+)\/-\/blob\/(.+?)\/(.+?)#L(\d+)-?(\d*)/g);
   if (gitlabMatch) {
-    const botMsg = await handleMatch(msg, gitlabMatch, "GitLab");
-    return botMsg;
+    for (const match of gitlabMatch) {
+      returned.push(handleMatch(msg, match, "GitLab"));
+    }
   }
 
-  const gistMatch = msg.content.match(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)[-~]?L?(\d*)/);
+  const gistMatch = msg.content.matchAll(/https?:\/\/gist\.github\.com\/([a-zA-Z0-9-_]+\/[0-9a-zA-Z]+)\/?([0-9a-z]*)\/*#file-(.+?)-L(\d+)[-~]?L?(\d*)/g);
   if (gistMatch) {
-    const botMsg = await handleMatch(msg, gistMatch, "Gist");
-    return botMsg;
+    for (const match of gistMatch) {
+      returned.push(handleMatch(msg, match, "Gist"));
+    }
   }
 
-  return null;
+  let msgList = await Promise.all(returned);
+  msgList = msgList.filter((el) => el).map((el) => {
+    totalLines += el[1];
+    return el[0];
+  });
+
+  if (totalLines > 50) {
+    return "Sorry, but to prevent spam, we limit the number of lines displayed at 50";
+  }
+
+  const botMsg = msgList.join("\n") || null;
+
+  if (botMsg && botMsg.length >= 2000) {
+    return "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet";
+  }
+  if (botMsg) {
+    msg.suppressEmbeds(true).catch(() => {});
+    // make sure to suppress the embed
+    setTimeout(() => msg.suppressEmbeds(true).catch(() => {}), 2000);
+
+    if (analytics) {
+      const bogusMsg = msg;
+      bogusMsg.content = ";link";
+      analytics.send(bogusMsg);
+    }
+  }
+
+  return botMsg;
 }
 
 bot.on("ready", () => {

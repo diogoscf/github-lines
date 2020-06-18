@@ -34,6 +34,8 @@ To run the bot yourself, follow these simple steps:
  3. Run `npm install`
  4. Run `npm start`
 
+If you wish to, you may also specify a [top.gg](https://top.gg/) token (after `TOPGG=`in the `.env` file), and/or a [Prismalytics](https://prismalytics.herokuapp.com) token (after `PRISMA_TOKEN=`in the `.env` file). You can also specify a GitHub OAuth token (after `GITHUB_TOKEN=`in the `.env` file) to avoid rate limits when accessing the API.
+
 ## Contributing
 
 We'd happily accept any contributions to this project. Open an issue if you have any ideas, or open a PR if you want to contribute directly
