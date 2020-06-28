@@ -12,12 +12,12 @@ const {
 const bot = new DiscordBot.Client();
 bot.login(DISCORD_TOKEN);
 
-const DBL = require("dblapi.js");
+const DBL = require("dblapi.js"); // discord bot list API (top.gg)
 if (TOPGG) {
   const dbl = new DBL(TOPGG, bot); // eslint-disable-line no-unused-vars
 }
 
-const Prismalytics = require("prismajs");
+const Prismalytics = require("prismajs"); // prismalytics.herokuapp.com
 let analytics = null;
 if (PRISMA_TOKEN) {
   analytics = new Prismalytics(PRISMA_TOKEN);
@@ -45,6 +45,11 @@ const COMMANDS = {
 };
 /* eslint-enable no-use-before-define */
 
+/**
+ * Converts milliseconds to a human-readable date-time string
+ * @param {Number} milliseconds Milliseconds
+ * @returns {String} human-readable date-time string. Format: D days, HH:MM:SS
+ */
 function convertMS(milliseconds) {
   let seconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(seconds / 60);
@@ -68,11 +73,17 @@ function convertMS(milliseconds) {
   return `${dayStr}${hours}:${minutes}:${seconds}`;
 }
 
+/**
+ * Formats the indentation of a string
+ * Any leading space common to all lines is removed
+ * @param {String} str Unformatted string
+ * @returns {String} Formatted string
+ */
 function formatIndent(str) {
-  const lines = str.replace(/\t/g, "    ").split("\n");
-  const ignored = [];
-  let minSpaces = Infinity;
-  const newLines = [];
+  const lines = str.replace(/\t/g, "    ").split("\n"); // replaces tabs with 4 spaces
+  const ignored = []; // list of blank lines
+  let minSpaces = Infinity; // the smallest amount of spaces in any line
+  const newLines = []; // array of the returned lines
   lines.forEach((line, idx) => {
     const leadingSpaces = line.search(/\S/);
     if (leadingSpaces === -1) {
@@ -93,19 +104,26 @@ function formatIndent(str) {
   return newLines.join("\n");
 }
 
+/**
+ * Handles a match for lines
+ * @param {DiscordBot.Message} msg The message with the detected match
+ * @param {Array} match The match list (as returned by a regex)
+ * @param {String} type The webiste the match was detected in
+ * @returns {?Array} an array with the message to return and the number of lines (null if failed)
+ */
 async function handleMatch(msg, match, type) {
   let lines;
   if (type === "GitHub") {
     const resp = await fetch(`https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`);
     if (!resp.ok) {
-      return null;
+      return null; // TODO: fallback to API
     }
     const text = await resp.text();
     lines = text.split("\n");
   } else if (type === "GitLab") {
     const resp = await fetch(`https://gitlab.com/${match[1]}/-/raw/${match[2]}/${match[3]}`);
     if (!resp.ok) {
-      return null;
+      return null; // TODO: fallback to API
     }
     const text = await resp.text();
     lines = text.split("\n");
@@ -115,7 +133,7 @@ async function handleMatch(msg, match, type) {
     if (match[2].length) {
       const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${match[3]}`);
       if (!resp.ok) {
-        return null;
+        return null; // TODO: fallback to API
       }
       text = await resp.text();
     } else {
@@ -139,7 +157,7 @@ async function handleMatch(msg, match, type) {
   let lineLength;
   if (!match[5].length || match[4] === match[5]) {
     if (parseInt(match[4], 10) > lines.length || parseInt(match[4], 10) === 0) return null;
-    toDisplay = lines[parseInt(match[4], 10) - 1].trim().replace(/``/g, "`\u200b`");
+    toDisplay = lines[parseInt(match[4], 10) - 1].trim().replace(/``/g, "`\u200b`"); // escape backticks
     lineLength = 1;
   } else {
     let start = parseInt(match[4], 10);
@@ -148,14 +166,18 @@ async function handleMatch(msg, match, type) {
     if (end > lines.length) end = lines.length;
     if (start === 0) start = 1;
     lineLength = end - start;
-    toDisplay = formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`");
+    toDisplay = formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`"); // escape backticks
   }
 
-  const extension = match[3].includes(".") ? match[3].split(".") : [""];
+  const extension = match[3].includes(".") ? match[3].split(".") : [""]; // file extension for syntax highlighting
   const message = `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
   return [message, lineLength];
 }
 
+/**
+ * Handles an "about" command
+ * @returns {DiscordBot.MessageEmbed} A discord embed message
+ */
 async function handleAbout() {
   const botApp = await bot.fetchApplication();
   let userCount = 0;
@@ -192,14 +214,26 @@ async function handleAbout() {
   return aboutEmbed;
 }
 
+/**
+ * Handles a "top.gg" command
+ * @returns {String} A message to be sent
+ */
 function handleTopgg() {
   return "We appreciate votes :heart: https://top.gg/bot/708282735227174922";
 }
 
+/**
+ * Handles a "github" command
+ * @returns {String} A message to be sent
+ */
 function handleGithubCommand() {
   return "Stars are appreciated :heart: https://github.com/diogoscf/github-lines";
 }
 
+/**
+ * Handles a "help" command
+ * @returns {DiscordBot.MessageEmbed} A discord embed message
+ */
 function handleHelp() {
   const helpEmbed = new DiscordBot.MessageEmbed()
     .setTitle("Help Info")
@@ -234,12 +268,23 @@ function handleHelp() {
   return helpEmbed;
 }
 
+/**
+ * Handles a "ping" command
+ * @param {DiscordBot.Message} msg The command message
+ * @return {null} avoids having to use special cases
+ */
 async function handlePing(msg) {
   const pingMsg = await msg.channel.send("Ping?");
   pingMsg.edit(`Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${bot.ws.ping}ms`);
   return null;
 }
 
+/**
+ * Master function
+ * Handles any message recieved by the bot
+ * @param {DiscordBot.Message} msg The received message
+ * @return {?(String|DiscordBot.MessageEmbed)} message to be sent (null if no message is to be sent)
+ */
 async function handleMessage(msg) {
   let command = null;
   if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
@@ -300,7 +345,7 @@ async function handleMessage(msg) {
 
     if (analytics) {
       const bogusMsg = msg;
-      bogusMsg.content = ";link";
+      bogusMsg.content = ";link"; // this is retarded, waiting for prismalytics to support command-less messages
       analytics.send(bogusMsg);
     }
   }
@@ -335,6 +380,10 @@ bot.on("guildCreate", (guild) => {
       "Have fun!"
     );
 
+  // If there is a system channel set, send message there
+  // Otherwise, send it in the first available channel
+  // TODO: fallback to 2nd method if bot can't send messages in system channel
+  // SUGGESTION: look for a "general" channel beofre fallback
   if (guild.systemChannel) {
     guild.systemChannel.send(joinEmbed);
     return;
