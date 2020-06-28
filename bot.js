@@ -1,4 +1,3 @@
-process.env.NTBA_FIX_319 = 1;
 require("dotenv").config();
 
 const fetch = require("node-fetch");
