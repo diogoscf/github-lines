@@ -124,7 +124,6 @@
         }
       }
     }],
-    "linebreak-style": ["warn", "windows"],
     "lines-around-directive": ["error", {
       "before": "always",
       "after": "always"
