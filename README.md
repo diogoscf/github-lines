@@ -2,6 +2,7 @@
 [![Up Status](https://top.gg/api/widget/status/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
 [![Servers](https://top.gg/api/widget/servers/708282735227174922.svg)](https://top.gg/bot/708282735227174922)
 [![TravisCI](https://travis-ci.com/diogoscf/github-lines.svg?branch=master)](https://travis-ci.com/diogoscf/github-lines)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/baf4e71f649147189e973c38fd5cd425)](https://app.codacy.com/manual/diogoscf/github-lines?utm_source=github.com&utm_medium=referral&utm_content=diogoscf/github-lines&utm_campaign=Badge_Grade_Dashboard)
 
 # GitHub Lines
 
