@@ -169,8 +169,11 @@ async function handleMatch(msg, match, type) {
     toDisplay = formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`"); // escape backticks
   }
 
-  const extension = match[3].includes(".") ? match[3].split(".") : [""]; // file extension for syntax highlighting
-  const message = `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension[extension.length - 1] : " "}\n${toDisplay}\n\`\`\``;
+  // file extension for syntax highlighting
+  let extension = (match[3].includes(".") ? match[3].split(".") : [""]).pop(); // .pop returns the last element
+  if (extension.match(/[^0-9a-z]/i) || !extension) extension = ""; // discord only allows alphanumeric extensions
+
+  const message = `\`\`\`${toDisplay.search(/\S/) !== -1 ? extension : " "}\n${toDisplay}\n\`\`\``;
   return [message, lineLength];
 }
 
