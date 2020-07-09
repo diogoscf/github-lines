@@ -2,14 +2,35 @@ require("dotenv").config();
 
 const fetch = require("node-fetch");
 
-const DiscordBot = require("discord.js");
+const DiscordBot = require("discord.js-commando");
 const {
   DISCORD_TOKEN,
   TOPGG,
   PRISMA_TOKEN,
   GITHUB_TOKEN
 } = process.env;
-const bot = new DiscordBot.Client();
+const bot = new DiscordBot.Client({
+  owner: "404599570090164224", // diogoscf#7418
+  commandPrefix: ";",
+  nonCommandEditable: false
+});
+
+const path = require("path");
+
+bot.registry
+  .registerGroup("commands", "all commands")
+  .registerDefaultTypes()
+  .registerDefaultGroups()
+  .registerDefaultCommands({
+    help: false, // custom help command
+    prefix: false, // no db for now
+    ping: false, // custom ping command
+    eval: false, // duh
+    unknownCommand: false, // bots that do this are trash
+    commandState: false // again, no db
+  })
+  .registerCommandsIn(path.resolve(__dirname, "commands"));
+
 bot.login(DISCORD_TOKEN);
 
 const DBL = require("dblapi.js"); // discord bot list API (top.gg)
@@ -26,51 +47,6 @@ if (PRISMA_TOKEN) {
 const authHeaders = {};
 if (GITHUB_TOKEN) {
   authHeaders.Authorization = `token ${GITHUB_TOKEN}`;
-}
-
-const PREFIX = ";";
-
-/* eslint-disable no-use-before-define */
-const COMMANDS = {
-  help: () => handleHelp(),
-  about: () => handleAbout(),
-  invite: () => handleTopgg(),
-  topgg: () => handleTopgg(),
-  botsgg: () => "We appreciate it! :heart: https://discord.bots.gg/bots/708282735227174922",
-  vote: () => handleTopgg(),
-  stats: () => handleAbout(),
-  ping: (msg) => handlePing(msg),
-  github: () => handleGithubCommand(),
-  source: () => handleGithubCommand()
-};
-/* eslint-enable no-use-before-define */
-
-/**
- * Converts milliseconds to a human-readable date-time string
- * @param {Number} milliseconds Milliseconds
- * @returns {String} human-readable date-time string. Format: D days, HH:MM:SS
- */
-function convertMS(milliseconds) {
-  let seconds = Math.floor(milliseconds / 1000);
-  let minutes = Math.floor(seconds / 60);
-  seconds = (seconds % 60).toString();
-  let hours = Math.floor(minutes / 60);
-  minutes = (minutes % 60).toString();
-  const days = Math.floor(hours / 24);
-  hours = (hours % 24).toString();
-
-  if (hours.length === 1) hours = `0${hours}`;
-  if (minutes.length === 1) minutes = `0${minutes}`;
-  if (seconds.length === 1) seconds = `0${seconds}`;
-
-  let dayStr = "";
-  if (days > 1) {
-    dayStr = `${days} days, `;
-  } else if (days === 1) {
-    dayStr = "1 day, ";
-  }
-
-  return `${dayStr}${hours}:${minutes}:${seconds}`;
 }
 
 /**
@@ -178,130 +154,12 @@ async function handleMatch(msg, match, type) {
 }
 
 /**
- * Handles an "about" command
- * @returns {DiscordBot.MessageEmbed} A discord embed message
- */
-async function handleAbout() {
-  const botApp = await bot.fetchApplication();
-  let userCount = 0;
-  bot.guilds.cache.forEach((guild) => {
-    userCount += guild.memberCount;
-  });
-  const aboutEmbed = new DiscordBot.MessageEmbed()
-    .setTitle("About GitHub Lines")
-    .setDescription("GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or GitLab) link")
-    // .setThumbnail("IMAGE HERE")
-    .addFields({
-      name: "Guild Count",
-      value: bot.guilds.cache.size,
-      inline: true
-    }, {
-      name: "User Count",
-      value: userCount,
-      inline: true
-    }, {
-      name: "Uptime",
-      value: convertMS(bot.uptime),
-      inline: true
-    }, {
-      name: "Latency",
-      value: `${bot.ws.ping}ms`,
-      inline: true
-    }, {
-      name: "Owner",
-      value: botApp.owner.tag,
-      inline: true
-    })
-    .setFooter("Made by diogoscf#7418", "https://cdn.discordapp.com/avatars/404599570090164224/04b80f9e7dd9933daedb6cbf504ef29c.webp");
-
-  return aboutEmbed;
-}
-
-/**
- * Handles a "top.gg" command
- * @returns {String} A message to be sent
- */
-function handleTopgg() {
-  return "We appreciate votes :heart: https://top.gg/bot/708282735227174922";
-}
-
-/**
- * Handles a "github" command
- * @returns {String} A message to be sent
- */
-function handleGithubCommand() {
-  return "Stars are appreciated :heart: https://github.com/diogoscf/github-lines";
-}
-
-/**
- * Handles a "help" command
- * @returns {DiscordBot.MessageEmbed} A discord embed message
- */
-function handleHelp() {
-  const helpEmbed = new DiscordBot.MessageEmbed()
-    .setTitle("Help Info")
-    .setDescription("GitHub Lines runs automatically, without need for configuration! Here are some commands you can use")
-    // .setThumbnail("IMAGE HERE")
-    .addFields({
-      name: "`;about` or `;stats`",
-      value: "Info about the bot",
-      inline: false
-    }, {
-      name: "`;invite`, `;vote` or `;topgg`",
-      value: "Link to the bot's top.gg page",
-      inline: false
-    }, {
-      name: "`;botsgg`",
-      value: "Link to the bot's discord.bots.gg page",
-      inline: false
-    }, {
-      name: "`;help`",
-      value: "Displays this message",
-      inline: false
-    }, {
-      name: "`;github` or `;source`",
-      value: "Link GitHub source",
-      inline: false
-    }, {
-      name: "`;ping`",
-      value: "Check bot latency",
-      inline: false
-    });
-
-  return helpEmbed;
-}
-
-/**
- * Handles a "ping" command
- * @param {DiscordBot.Message} msg The command message
- * @return {null} avoids having to use special cases
- */
-async function handlePing(msg) {
-  const pingMsg = await msg.channel.send("Ping?");
-  pingMsg.edit(`Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${bot.ws.ping}ms`);
-  return null;
-}
-
-/**
  * Master function
  * Handles any message recieved by the bot
  * @param {DiscordBot.Message} msg The received message
- * @return {?(String|DiscordBot.MessageEmbed)} message to be sent (null if no message is to be sent)
+ * @return {?String} message to be sent (null if no message is to be sent)
  */
 async function handleMessage(msg) {
-  let command = null;
-  if (msg.content.trim().startsWith(`<@!${bot.user.id}>`)) {
-    command = msg.content.substring(`<@!${bot.user.id}>`.length).trim();
-  } else if (msg.content.trim().startsWith(PREFIX)) {
-    command = msg.content.substring(PREFIX.length).trim();
-  }
-
-  if (Object.keys(COMMANDS).includes(command)) {
-    const botMsg = await COMMANDS[command](msg);
-    if (analytics) analytics.send(msg);
-    return botMsg;
-  }
-
   const returned = [];
   let totalLines = 0;
 
@@ -372,6 +230,10 @@ bot.on("message", async (msg) => {
   }
 });
 
+bot.on("commandRun", (a, b, msg) => {
+  if (analytics) analytics.send(msg);
+});
+
 bot.on("guildCreate", (guild) => {
   const joinEmbed = new DiscordBot.MessageEmbed()
     .setTitle("Thanks for adding me to your server! :heart:")
@@ -385,9 +247,8 @@ bot.on("guildCreate", (guild) => {
 
   // If there is a system channel set, send message there
   // Otherwise, send it in the first available channel
-  // TODO: fallback to 2nd method if bot can't send messages in system channel
-  // SUGGESTION: look for a "general" channel beofre fallback
-  if (guild.systemChannel) {
+  // SUGGESTION: look for a "general" channel before fallback
+  if (guild.systemChannel && guild.me.permissionsIn(guild.systemChannel).has("SEND_MESSAGES")) {
     guild.systemChannel.send(joinEmbed);
     return;
   }

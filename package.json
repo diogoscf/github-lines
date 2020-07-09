@@ -19,11 +19,12 @@
   "scripts": {
     "start": "node bot.js",
     "test": "mocha tests/test.js --delay",
-    "lint": "npx eslint bot.js"
+    "lint": "eslint . --ext .js"
   },
   "dependencies": {
     "dblapi.js": "^2.4.0",
     "discord.js": "^12.2.0",
+    "discord.js-commando": "git+https://github.com/discordjs/Commando.git",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
     "prismajs": "^1.0.0"

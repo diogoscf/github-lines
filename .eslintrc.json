@@ -8,6 +8,7 @@
     "ecmaVersion": 2018
   },
   "extends": "eslint:recommended",
+  "ignorePatterns": ["tests/*.js"],
   "rules": {
     "array-bracket-spacing": ["error", "never"],
     "array-callback-return": ["error", {
