@@ -1,6 +1,7 @@
-const { Command } = require("discord.js-commando");
+import { Command } from "discord.js-commando";
+import * as DiscordBot from "discord.js";
 
-module.exports = class TopggCommand extends Command {
+export class TopggCommand extends Command {
   constructor(client) {
     super(client, {
       name: "topgg",
@@ -16,7 +17,7 @@ module.exports = class TopggCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  run(msg) {
+  run(msg): Promise<DiscordBot.Message> {
     return msg.channel.send("We appreciate votes :heart: https://top.gg/bot/708282735227174922");
   }
-};
+}

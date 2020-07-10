@@ -3,3 +3,6 @@
 
 # Node modules
 node_modules/
+
+# Generated code
+build/

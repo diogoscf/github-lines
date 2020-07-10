@@ -1,6 +1,7 @@
-const { Command } = require("discord.js-commando");
+import { Command } from "discord.js-commando";
+import * as DiscordBot from "discord.js";
 
-module.exports = class SourceCommand extends Command {
+export class SourceCommand extends Command {
   constructor(client) {
     super(client, {
       name: "source",
@@ -16,7 +17,7 @@ module.exports = class SourceCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  run(msg) {
+  run(msg): Promise<DiscordBot.Message> {
     return msg.channel.send("Stars are appreciated :heart: https://github.com/diogoscf/github-lines");
   }
-};
+}

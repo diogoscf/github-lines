@@ -1,5 +1,5 @@
 fail_on_violations: true
 eslint:
   enabled: true
-  version: 6.8.0
+  version: 7.0.0
   config_file: .eslintrc.json

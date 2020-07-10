@@ -1,6 +1,7 @@
-const { Command } = require("discord.js-commando");
+import { Command } from "discord.js-commando";
+import * as DiscordBot from "discord.js";
 
-module.exports = class PingCommand extends Command {
+export class PingCommand extends Command {
   constructor(client) {
     super(client, {
       name: "ping",
@@ -15,8 +16,10 @@ module.exports = class PingCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async run(msg) {
+  async run(msg): Promise<DiscordBot.Message> {
     const pingMsg = await msg.channel.send("Ping?");
-    return pingMsg.edit(`Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${msg.client.ws.ping}ms`);
+    return pingMsg.edit(
+      `Pong! Latency is ${pingMsg.createdTimestamp - msg.createdTimestamp}ms. API Latency is ${msg.client.ws.ping}ms`
+    );
   }
-};
+}
