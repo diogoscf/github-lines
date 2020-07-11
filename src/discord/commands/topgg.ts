@@ -1,7 +1,7 @@
-import { Command } from "discord.js-commando";
 import * as DiscordBot from "discord.js";
+import { RLCommand } from "../types_discord";
 
-export class TopggCommand extends Command {
+export class TopggCommand extends RLCommand {
   constructor(client) {
     super(client, {
       name: "topgg",

@@ -1,7 +1,7 @@
-import { Command } from "discord.js-commando";
 import * as DiscordBot from "discord.js";
+import { RLCommand } from "../types_discord";
 
-export class PingCommand extends Command {
+export class PingCommand extends RLCommand {
   constructor(client) {
     super(client, {
       name: "ping",
