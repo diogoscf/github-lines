@@ -31,18 +31,27 @@ import { Message, PermissionString } from "discord.js";
  * custom class for custom rate-limiting
  */
 export class RLCommand extends Command {
-  onBlock(
+  async onBlock(
     message: CommandoMessage,
     reason: string,
     data?: { throttle?; remaining?: number; response?: string; missing?: PermissionString[] }
   ): Promise<Message | Message[]> {
     if (reason !== "throttling") return super.onBlock(message, reason, data);
 
-    if (data?.throttle?.usages === this.throttling.usages) {
-      data.throttle.usages += 1; // eslint-disable-line no-param-reassign
-      return super.onBlock(message, reason, data);
-    }
+    const response = await super.onBlock(message, reason, data);
 
-    return message.pinned ? message.pin() : message.unpin(); // because null is not an acceptable return value
+    // delete messages after 5 seconds
+    setTimeout(() => {
+      if (response instanceof Message) {
+        response.delete();
+      } else {
+        for (const msg of response) {
+          msg.delete();
+        }
+      }
+      if (message.deletable) message.delete();
+    }, 5000);
+
+    return response;
   }
 }

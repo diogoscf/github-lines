@@ -9,6 +9,7 @@ export class AboutCommand extends RLCommand {
       memberName: "about",
       group: "commands",
       description: "Info about the bot",
+      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
       throttling: {
         usages: 1,
         duration: 15
@@ -26,7 +27,7 @@ export class AboutCommand extends RLCommand {
     let hourStr = (hours % 24).toString();
 
     if (hourStr.length === 1) hourStr = `0${hourStr}`;
-    if (minuteStr.length === 1) minuteStr = `0${minutes}`;
+    if (minuteStr.length === 1) minuteStr = `0${minuteStr}`;
     if (secondStr.length === 1) secondStr = `0${secondStr}`;
 
     let dayStr = "";

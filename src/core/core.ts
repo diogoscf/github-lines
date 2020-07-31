@@ -83,7 +83,11 @@ export class Core {
           return null;
         }
         const json = await resp.json();
-        text = json.files[filename].content;
+        text = json.files[filename]?.content;
+        if (!text) {
+          // if the gist exists but not the file
+          return null;
+        }
       }
       lines = text.split("\n");
     } else {

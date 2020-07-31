@@ -107,7 +107,6 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         help: false, // custom help command
         prefix: false, // no db for now
         ping: false, // custom ping command
-        eval: false, // duh
         unknownCommand: false, // bots that do this are trash
         commandState: false // again, no db
       })
@@ -135,9 +134,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     }
 
     if (botMsg) {
-      msg.suppressEmbeds(true).catch(console.error);
-      // make sure to suppress the embed
-      setTimeout(() => msg.suppressEmbeds(true).catch(console.error), 2000);
+      if (msg.pinnable) {
+        // can always supress embed if pinnable
+        // it can take a few ms before the supress can be registered
+        setTimeout(() => msg.suppressEmbeds(true).catch(console.error), 100);
+      }
 
       if (this.analytics) {
         const bogusMsg = msg;

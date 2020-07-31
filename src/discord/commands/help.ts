@@ -8,6 +8,7 @@ export class HelpCommand extends RLCommand {
       memberName: "help",
       group: "commands",
       description: "Displays a help message",
+      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
       throttling: {
         usages: 1,
         duration: 15
