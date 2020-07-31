@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "start": "node build/app.js --discord",
+    "build": "tsc",
     "start-discord": "node build/app.js --discord",
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "lint": "eslint src --ext js,ts",
