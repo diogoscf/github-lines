@@ -30,7 +30,7 @@
     "discord.js-commando": "git+https://github.com/discordjs/Commando.git",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
-    "prismajs": "^1.0.0",
+    "prismajs": "^1.0.2",
     "ts-is-present": "^1.1.3"
   },
   "devDependencies": {
