@@ -62,8 +62,12 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
 
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
           const collector = sentmsg.createReactionCollector(filter, { time: 15000 });
-          collector.on("collect", () => sentmsg.delete());
-          collector.on("end", () => botReaction.remove());
+          collector.on("collect", () => {
+            if (!sentmsg.deleted) sentmsg.delete();
+          });
+          collector.on("end", () => {
+            if (!sentmsg.deleted) botReaction.remove();
+          });
         }
       }
     });
