@@ -51,9 +51,20 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         return;
       }
 
-      const botMsg = await this.handleMessage(msg);
+      const [botMsg, toDelete] = await this.handleMessage(msg);
       if (botMsg) {
-        msg.channel.send(botMsg);
+        const sentmsg = await msg.channel.send(botMsg);
+
+        if (toDelete) {
+          sentmsg.delete({ timeout: 5000 }).catch(() => null); // error ignored - someone else deleted
+        } else if (!sentmsg.guild || sentmsg.guild.me?.permissionsIn(sentmsg.channel).has("ADD_REACTIONS")) {
+          const botReaction = await sentmsg.react("🗑️");
+
+          const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
+          const collector = sentmsg.createReactionCollector(filter, { time: 15000 });
+          collector.on("collect", () => sentmsg.delete());
+          collector.on("end", () => botReaction.remove());
+        }
       }
     });
 
@@ -116,11 +127,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       });
   }
 
-  async handleMessage(msg: DiscordBot.Message): Promise<string | null> {
+  async handleMessage(msg: DiscordBot.Message): Promise<(null | string | boolean)[]> {
     const { msgList, totalLines } = await this.core.handleMessage(msg.content);
 
     if (totalLines > 50) {
-      return "Sorry, but to prevent spam, we limit the number of lines displayed at 50";
+      return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50", true];
     }
 
     const messages = msgList.map(
@@ -130,7 +141,10 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     const botMsg = messages.join("\n") || null;
 
     if (botMsg && botMsg.length >= 2000) {
-      return "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet";
+      return [
+        "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet",
+        true
+      ];
     }
 
     if (botMsg) {
@@ -147,6 +161,6 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       }
     }
 
-    return botMsg;
+    return [botMsg, false];
   }
 }
