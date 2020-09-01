@@ -63,10 +63,10 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
           const collector = sentmsg.createReactionCollector(filter, { time: 15000 });
           collector.on("collect", () => {
-            if (!sentmsg.deleted) sentmsg.delete();
+            if (!sentmsg.deleted) sentmsg.delete().catch(() => null); // error ignored - someone else deleted
           });
           collector.on("end", () => {
-            if (!sentmsg.deleted) botReaction.remove();
+            if (!sentmsg.deleted) botReaction.users.remove().catch(() => null); // error ignored - someone else removed
           });
         }
       }
@@ -152,8 +152,8 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     }
 
     if (botMsg) {
-      if (msg.pinnable) {
-        // can always supress embed if pinnable
+      if (msg.deletable) {
+        // can always supress embed if deletable
         // it can take a few ms before the supress can be registered
         setTimeout(() => msg.suppressEmbeds(true).catch(console.error), 100);
       }
