@@ -66,10 +66,10 @@ export class Core {
       const text = await resp.text();
       lines = text.split("\n");
     } else if (type === "Gist") {
-      filename = filename.replace(/-([^-]*)$/, ".$1");
+      const dotFilename = filename.replace(/-([^-]*)$/, ".$1");
       let text;
       if (match[2].length) {
-        const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${filename}`);
+        const resp = await fetch(`https://gist.githubusercontent.com/${match[1]}/raw/${match[2]}/${dotFilename}`);
         if (!resp.ok) {
           return null; // TODO: fallback to API
         }
@@ -83,12 +83,18 @@ export class Core {
           return null;
         }
         const json = await resp.json();
-        text = json.files[filename]?.content;
+        text =
+          json.files[dotFilename]?.content ||
+          json.files[
+            Object.keys(json.files).find((key) => key.toLowerCase().replace(/\W+/g, "-") === filename.toLowerCase())
+          ]?.content; // this madness allows for matching filenames with weird chars
+
         if (!text) {
           // if the gist exists but not the file
           return null;
         }
       }
+      filename = dotFilename;
       lines = text.split("\n");
     } else {
       console.log("Wrong type sent to handleMatch!");
