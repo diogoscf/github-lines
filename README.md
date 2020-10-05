@@ -39,7 +39,7 @@ If you wish to, you may also specify a [top.gg](https://top.gg/) token (after `T
 
 ## Contributing
 
-We'd happily accept any contributions to this project. Open an issue if you have any ideas, or open a PR if you want to contribute directly
+We'd happily accept any contributions to this project. Open an issue if you have any ideas, or open a PR if you want to contribute directly. We are open to Hacktoberfest contributions, but please avoid spam or we will have no choice but to disqualify your pull request.
 
 ### Contributors
 
