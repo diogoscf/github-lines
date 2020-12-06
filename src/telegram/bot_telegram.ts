@@ -11,12 +11,10 @@ export class GHLTelegramBot extends TelegramBot {
 
   readonly config: TelegramConfig;
 
-  readonly analytics: Prismalytics;
-
   constructor(core: Core, config: TelegramConfig) {
     super(config.TELEGRAM_TOKEN, { polling: true });
     this.core = core;
-    this.telegramConfig = config;
+    this.config = config;
   }
 
   /**
@@ -45,15 +43,18 @@ export class GHLTelegramBot extends TelegramBot {
       msg.new_chat_members?.forEach(async (user) => {
         const botData = await this.getMe();
         if (user.id === botData.id) {
-          const chatId = `msg.chat.id: ${msg.chat.id}, msg.chat.title: ${msg.chat.title}`;
-
           this.sendMessage(
             msg.chat.id,
-            `Hello! Since now, you are only allowed to speak ${this.core.config.REQUIRED_LANG}. ${chatId}`,
-            {
-              parse_mode: "HTML"
-            }
+            "GitHub Lines runs automatically, without need for commands or configuration! " +
+              "Just send a GitHub (or GitLab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
+              "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `/help`\n\n" +
+              "If you want to support us, just convince your friends to add the bot to their group chat!\n\n" +
+              "Have fun!"
           );
+
+          this.sendMessage(msg.chat.id, "Thanks for adding me to your server! ❤️", {
+            parse_mode: "HTML"
+          });
         }
       });
     });

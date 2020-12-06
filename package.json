@@ -17,9 +17,10 @@
     "github"
   ],
   "scripts": {
-    "start": "node build/app.js --discord",
     "build": "tsc",
+    "start": "node build/app.js --discord --telegram",
     "start-discord": "node build/app.js --discord",
+    "start-telegram": "node build/app.js --telegram",
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "lint": "eslint src --ext js,ts",
     "lint-fix": "eslint src --ext js,ts --fix"
