@@ -9,11 +9,12 @@
   "author": "diogoscf <diogo@diogos.cf> (https://diogos.cf)",
   "license": "MIT",
   "engines": {
-    "node": ">=13.0.0"
+    "node": ">=14.0.0"
   },
   "keywords": [
     "nodejs",
     "discord.js",
+    "telegram",
     "github"
   ],
   "scripts": {
