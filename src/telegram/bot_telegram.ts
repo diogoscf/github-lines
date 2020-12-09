@@ -35,10 +35,12 @@ export class GHLTelegramBot extends TelegramBot {
       //   return;
       // }
 
-      const res = await this.core.handleMessage(msg.text);
-      console.log(res);
-
-      await this.sendMessage(msg.chat.id, res.msgList.toString());
+      const [botMsg] = await this.handleMessage(msg);
+      console.log(botMsg);
+      if (botMsg) {
+        const sentMessage = await this.sendMessage(msg.chat.id, botMsg, { parse_mode: "Markdown" });
+        console.log(sentMessage);
+      }
 
       console.log("TODO: finish parsing messages - replicate discord functionality");
       // the line above is console.log() so ESLint doesn't get angry about return
@@ -66,5 +68,29 @@ export class GHLTelegramBot extends TelegramBot {
     });
 
     console.log("Started Telegram bot.");
+  }
+
+  async handleMessage(msg: TelegramBot.Message): Promise<(string | null)[]> {
+    if (!msg.text) {
+      return ["Something strange happened - the message is empty!"];
+    }
+
+    const { msgList, totalLines } = await this.core.handleMessage(msg.text);
+
+    if (totalLines > 50) {
+      return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50"];
+    }
+
+    const messages = msgList.map(
+      (ld) => `\`\`\`${ld.toDisplay.search(/\S/) !== -1 ? ld.extension : " "}\n${ld.toDisplay}\n\`\`\``
+    );
+
+    const botMsg = messages.join("\n") || null;
+
+    if (botMsg && botMsg.length >= 2000) {
+      return ["Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet"];
+    }
+
+    return [botMsg];
   }
 }
