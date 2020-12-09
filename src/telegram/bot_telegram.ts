@@ -23,7 +23,7 @@ export class GHLTelegramBot extends TelegramBot {
   start(): void {
     // The essence of this bot, scan all messages
     this.on("message", async (msg) => {
-      if (msg.text === undefined) {
+      if (!msg.text) {
         console.log("Message doesn't contain text, returned. (msg.text === undefined)");
         return;
       }
@@ -34,6 +34,11 @@ export class GHLTelegramBot extends TelegramBot {
       //   this.sendMessage(msg.chat.id, "Sorry, I work only in groups.");
       //   return;
       // }
+
+      const res = await this.core.handleMessage(msg.text);
+      console.log(res);
+
+      await this.sendMessage(msg.chat.id, res.msgList.toString());
 
       console.log("TODO: finish parsing messages - replicate discord functionality");
       // the line above is console.log() so ESLint doesn't get angry about return
