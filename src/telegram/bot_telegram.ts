@@ -28,22 +28,10 @@ export class GHLTelegramBot extends TelegramBot {
         return;
       }
 
-      /// Diogo says: "private OK"
-      // if (msg.chat.type === "private") {
-      //   console.log("Message was sent in a private chat, returned. (msg.chat.type === private)");
-      //   this.sendMessage(msg.chat.id, "Sorry, I work only in groups.");
-      //   return;
-      // }
-
       const [botMsg] = await this.handleMessage(msg);
-      console.log(botMsg);
       if (botMsg) {
-        const sentMessage = await this.sendMessage(msg.chat.id, botMsg, { parse_mode: "Markdown" });
-        console.log(sentMessage);
+        await this.sendMessage(msg.chat.id, botMsg, { parse_mode: "Markdown" });
       }
-
-      console.log("TODO: finish parsing messages - replicate discord functionality");
-      // the line above is console.log() so ESLint doesn't get angry about return
     });
 
     // Perform some initial setup when added to a group
@@ -51,6 +39,10 @@ export class GHLTelegramBot extends TelegramBot {
       msg.new_chat_members?.forEach(async (user) => {
         const botData = await this.getMe();
         if (user.id === botData.id) {
+          this.sendMessage(msg.chat.id, "Thanks for adding me to your group! ❤️", {
+            parse_mode: "HTML"
+          });
+
           this.sendMessage(
             msg.chat.id,
             "GitHub Lines runs automatically, without need for commands or configuration! " +
@@ -59,10 +51,6 @@ export class GHLTelegramBot extends TelegramBot {
               "If you want to support us, just convince your friends to add the bot to their group chat!\n\n" +
               "Have fun!"
           );
-
-          this.sendMessage(msg.chat.id, "Thanks for adding me to your server! ❤️", {
-            parse_mode: "HTML"
-          });
         }
       });
     });
@@ -70,6 +58,11 @@ export class GHLTelegramBot extends TelegramBot {
     console.log("Started Telegram bot.");
   }
 
+  /**
+   * This is Telegram-level handleMessage(). It calls core-level handleMesasge() and then
+   * performs necessary formatting and validation.
+   * @param msg Telegram message object
+   */
   async handleMessage(msg: TelegramBot.Message): Promise<(string | null)[]> {
     if (!msg.text) {
       return ["Something strange happened - the message is empty!"];
