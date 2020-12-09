@@ -46,8 +46,8 @@
     ],
     "import/newline-after-import": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
-    "@typescript-eslint/interface-name-prefix": ["error", { "prefixWithI": "always" }],
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-var-requires": "warn"
   },
 

@@ -28,11 +28,12 @@ export class GHLTelegramBot extends TelegramBot {
         return;
       }
 
-      if (msg.chat.type === "private") {
-        console.log("Message was sent in a private chat, returned. (msg.chat.type === private)");
-        this.sendMessage(msg.chat.id, "Sorry, I work only in groups.");
-        return;
-      }
+      /// Diogo says: "private OK"
+      // if (msg.chat.type === "private") {
+      //   console.log("Message was sent in a private chat, returned. (msg.chat.type === private)");
+      //   this.sendMessage(msg.chat.id, "Sorry, I work only in groups.");
+      //   return;
+      // }
 
       console.log("TODO: finish parsing messages - replicate discord functionality");
       // the line above is console.log() so ESLint doesn't get angry about return
