@@ -24,7 +24,6 @@ export class GHLTelegramBot extends TelegramBot {
     // The essence of this bot, scan all messages
     this.on("message", async (msg) => {
       if (!msg.text) {
-        console.log("Message doesn't contain text, returned. (msg.text === undefined)");
         return;
       }
 
@@ -80,8 +79,10 @@ export class GHLTelegramBot extends TelegramBot {
 
     const botMsg = messages.join("\n") || null;
 
-    if (botMsg && botMsg.length >= 2000) {
-      return ["Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet"];
+    if (botMsg && botMsg.length >= 4096) {
+      return [
+        "Sorry but there is a 4096 character limit on Telegram, so we were unable to display the desired snippet"
+      ];
     }
 
     return [botMsg];
