@@ -131,6 +131,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       });
   }
 
+  /**
+   * This is Discord-level handleMessage(). It calls core-level handleMesasge() and then
+   * performs necessary formatting and validation.
+   * @param msg Discord message object
+   */
   async handleMessage(msg: DiscordBot.Message): Promise<(null | string | boolean)[]> {
     const { msgList, totalLines } = await this.core.handleMessage(msg.content);
 

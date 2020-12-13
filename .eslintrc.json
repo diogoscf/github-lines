@@ -11,7 +11,12 @@
     "plugin:import/recommended",
     "plugin:promise/recommended"
   ],
-  "plugins": ["@typescript-eslint", "prettier", "promise", "import"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "promise",
+    "import"
+  ],
   "env": {
     "node": true,
     "es6": true,
@@ -23,7 +28,10 @@
     "max-classes-per-file": "off",
     "class-methods-use-this": "off",
     "no-unused-expressions": "off",
-    "comma-dangle": ["error", "never"],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
@@ -31,7 +39,12 @@
       }
     ],
     "import/prefer-default-export": "off",
-    "prefer-destructuring": ["error", { "array": false }],
+    "prefer-destructuring": [
+      "error",
+      {
+        "array": false
+      }
+    ],
     "import/first": "off",
     "import/extensions": [
       "error",
@@ -46,20 +59,32 @@
     ],
     "import/newline-after-import": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
-    "@typescript-eslint/interface-name-prefix": ["error", { "prefixWithI": "always" }],
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-var-requires": "warn"
   },
-
   // Needed for eslint-plugin-import to correctly detect .ts files
   "settings": {
-    "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+    "import/extensions": [
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx"
+    ],
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
     },
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     }
   }
