@@ -56,6 +56,11 @@ export class GHLMatrixBot extends MatrixClient {
       }
     });
 
+    // Handle invites
+    this.on("room.join", async (roomId: string) => {
+      await this.handleInvite(roomId);
+    });
+
     console.log("Started Matrix bot.");
   }
 
@@ -85,7 +90,7 @@ export class GHLMatrixBot extends MatrixClient {
     return [botMsg];
   }
 
-  async handleInvite(event: any, targetRoomId: string): Promise<void> {
+  async handleInvite(targetRoomId: string): Promise<void> {
     // Perform some initial setup when added to a group
 
     await this.sendHtmlText(targetRoomId, "Thanks for adding me to your group! ❤️");
@@ -97,9 +102,5 @@ export class GHLMatrixBot extends MatrixClient {
         "If you want to support us, just convince your friends to add the bot to their group chat!\n\n" +
         "Have fun!"
     );
-
-    // let the user who invited the bot know that the invite completed
-    // successfully
-    await this.sendText(event.sender, `Invite to ${targetRoomId} was successful.`);
   }
 }
