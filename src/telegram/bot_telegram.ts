@@ -58,7 +58,7 @@ export class GHLTelegramBot extends TelegramBot {
   }
 
   /**
-   * This is Telegram-level handleMessage(). It calls core-level handleMesasge() and then
+   * This is Telegram-level handleMessage(). It calls core-level handleMessage() and then
    * performs necessary formatting and validation.
    * @param msg Telegram message object
    */
