@@ -1,5 +1,6 @@
 # .env file
 .env
+github_lines-matrix.json
 
 # Node modules
 node_modules/

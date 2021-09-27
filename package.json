@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "dblapi.js": "^2.4.1",
-    "discord.js": "^12.5.1",
-    "discord.js-commando": "git+https://github.com/discordjs/Commando.git",
+    "discord.js": "12.5.1",
+    "discord.js-commando": "0.11.0",
     "dotenv": "^8.2.0",
     "matrix-bot-sdk": "^0.5.11",
     "node-fetch": "^2.6.1",
