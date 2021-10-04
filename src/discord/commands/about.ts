@@ -76,13 +76,13 @@ export class AboutCommand extends RLCommand {
         },
         {
           name: "Owner",
-          value: botApp.owner.tag,
+          value: "diogoscf#2167",
           inline: true
         }
       )
       .setFooter(
-        "Made by diogoscf#7418",
-        "https://cdn.discordapp.com/avatars/404599570090164224/04b80f9e7dd9933daedb6cbf504ef29c.webp"
+        "Made by diogoscf#2167",
+        "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
       );
 
     return msg.channel.send(aboutEmbed);

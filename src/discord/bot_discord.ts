@@ -123,7 +123,8 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         prefix: false, // no db for now
         ping: false, // custom ping command
         unknownCommand: false, // bots that do this are trash
-        commandState: false // again, no db
+        commandState: false, // again, no db
+        eval: false
       })
       .registerCommandsIn({
         filter: /^([^.].*)\.(js|ts)$/,
