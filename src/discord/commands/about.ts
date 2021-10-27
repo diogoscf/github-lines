@@ -56,12 +56,12 @@ export class AboutCommand extends RLCommand {
       .addFields(
         {
           name: "Guild Count",
-          value: msg.client.guilds.cache.size,
+          value: msg.client.guilds.cache.size.toString(),
           inline: true
         },
         {
           name: "User Count",
-          value: userCount,
+          value: userCount.toString(),
           inline: true
         },
         {

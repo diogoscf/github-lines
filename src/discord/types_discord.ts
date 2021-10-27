@@ -30,7 +30,7 @@ import { Message, PermissionString } from "discord.js";
 /**
  * custom class for custom rate-limiting
  */
-export class RLCommand extends Command {
+export abstract class RLCommand extends Command {
   async onBlock(
     message: CommandoMessage,
     reason: string,

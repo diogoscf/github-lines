@@ -51,17 +51,17 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         return;
       }
 
-      const [botMsg, toDelete] = await this.handleMessage(msg);
+      const { botMsg, toDelete } = await this.handleMessage(msg);
       if (botMsg) {
         const sentmsg = await msg.channel.send(botMsg);
 
         if (toDelete) {
-          sentmsg.delete({ timeout: 5000 }).catch(() => null); // error ignored - someone else deleted
-        } else if (!sentmsg.guild || sentmsg.guild.me?.permissionsIn(sentmsg.channel).has("ADD_REACTIONS")) {
+          setTimeout(() => sentmsg.delete().catch(() => null), 5000); // errors ignored - someone else deleted
+        } else if (!sentmsg.guild || sentmsg.channel.permissionsFor(sentmsg.guild.me).has("ADD_REACTIONS")) {
           const botReaction = await sentmsg.react("🗑️");
 
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
-          const collector = sentmsg.createReactionCollector(filter, { time: 15000 });
+          const collector = sentmsg.createReactionCollector({ filter, time: 15000 });
           collector.on("collect", () => {
             if (!sentmsg.deleted) sentmsg.delete().catch(() => null); // error ignored - someone else deleted
           });
@@ -73,7 +73,7 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     });
 
     this.on("ready", () => {
-      this?.user?.setActivity("for GitHub links", {
+      this ?.user ?.setActivity("for GitHub links", {
         type: "WATCHING"
       });
     });
@@ -89,26 +89,25 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         .setTitle("Thanks for adding me to your server! :heart:")
         .setDescription(
           "GitHub Lines runs automatically, without need for commands or configuration! " +
-            "Just send a GitHub (or GitLab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
-            "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
-            "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
-            "Have fun!"
+          "Just send a GitHub (or GitLab) link that mentions one or more lines and the bot will automatically respond.\n\n" +
+          "There are a few commands you can use, although they are not necessary for the bot to work. To get a list, type `;help`\n\n" +
+          "If you want to support us, just convince your friends to add the bot to their server!\n\n" +
+          "Have fun!"
         );
 
       // If there is a system channel set (and the bot has perms there), send message there
       // Otherwise, send it to #general if it exists, or to the first text channel
-      if (guild.systemChannel && guild.me?.permissionsIn(guild.systemChannel).has("SEND_MESSAGES")) {
-        guild.systemChannel.send(joinEmbed);
+      if (guild.systemChannel && guild.me ?.permissionsIn(guild.systemChannel).has("SEND_MESSAGES")) {
+        guild.systemChannel.send({ embeds: [joinEmbed] });
         return;
       }
 
-      const textChannels = guild.channels.cache
-        .array()
+      const textChannels = [...guild.channels.cache.values()]
         .filter((c): c is DiscordBot.TextChannel => c instanceof DiscordBot.TextChannel);
-      let channel = textChannels.find((c) => c.name === "general" && guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
-      if (!channel) channel = textChannels.find((c) => guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
+      let channel = textChannels.find((c) => c.name === "general" && guild.me ?.permissionsIn(c).has("SEND_MESSAGES"));
+      if (!channel) channel = textChannels.find((c) => guild.me ?.permissionsIn(c).has("SEND_MESSAGES"));
 
-      channel?.send(joinEmbed);
+      channel ?.send({ embeds: [joinEmbed] });
     });
 
     console.log("Started Discord bot.");
@@ -137,11 +136,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
    * performs necessary formatting and validation.
    * @param msg Discord message object
    */
-  async handleMessage(msg: DiscordBot.Message): Promise<(null | string | boolean)[]> {
+  async handleMessage(msg: DiscordBot.Message): Promise<{ botMsg: null | string, toDelete: boolean }> {
     const { msgList, totalLines } = await this.core.handleMessage(msg.content);
 
     if (totalLines > 50) {
-      return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50", true];
+      return { botMsg: "Sorry, but to prevent spam, we limit the number of lines displayed at 50", toDelete: true };
     }
 
     const messages = msgList.map(
@@ -151,10 +150,10 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     const botMsg = messages.join("\n") || null;
 
     if (botMsg && botMsg.length >= 2000) {
-      return [
-        "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet",
-        true
-      ];
+      return {
+        botMsg: "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet",
+        toDelete: true
+      };
     }
 
     if (botMsg) {
@@ -171,6 +170,6 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       }
     }
 
-    return [botMsg, false];
+    return { botMsg, toDelete: false };
   }
 }
