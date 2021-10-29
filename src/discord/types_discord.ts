@@ -1,3 +1,6 @@
+import { Intents } from "discord.js";
+import { CooldownOptions } from "@sapphire/framework";
+
 /**
  * Discord-specific configuration.
  */
@@ -10,27 +13,33 @@ export class DiscordConfig {
 
   readonly owner: string;
 
-  readonly commandPrefix: string;
+  readonly defaultPrefix: string;
 
-  readonly nonCommandEditable: boolean;
+  readonly caseInsensitiveCommands: boolean;
+
+  readonly intents: Intents;
+
+  readonly defaultCooldown: CooldownOptions
 
   constructor(dstoken: string, ptoken?: string, topgg?: string) {
     this.DISCORD_TOKEN = dstoken;
     this.PRISMA_TOKEN = ptoken;
     this.TOPGG = topgg;
     this.owner = "817789370022101053"; // diogoscf#2167
-    this.commandPrefix = ";";
-    this.nonCommandEditable = false;
+    this.defaultPrefix = ";";
+    this.caseInsensitiveCommands = true;
+    this.intents = new Intents(["GUILDS", "GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS", "DIRECT_MESSAGES", "DIRECT_MESSAGE_REACTIONS"]);
+    this.defaultCooldown = { delay: 15, limit: 1 }
   }
 }
 
-import { Command, CommandoMessage } from "discord.js-commando";
+/*import { Command, CommandoMessage } from "@sapphire/framework";
 import { Message, PermissionString } from "discord.js";
-
+*/
 /**
  * custom class for custom rate-limiting
  */
-export abstract class RLCommand extends Command {
+/*export abstract class RLCommand extends Command {
   async onBlock(
     message: CommandoMessage,
     reason: string,
@@ -54,4 +63,4 @@ export abstract class RLCommand extends Command {
 
     return response;
   }
-}
+}*/

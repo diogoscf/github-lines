@@ -1,23 +1,17 @@
 import * as DiscordBot from "discord.js";
-import { RLCommand } from "../types_discord";
+import { Command } from "@sapphire/framework";
 
-export class HelpCommand extends RLCommand {
+export class HelpCommand extends Command {
   constructor(client) {
     super(client, {
       name: "help",
-      memberName: "help",
-      group: "commands",
       description: "Displays a help message",
-      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
-      throttling: {
-        usages: 1,
-        duration: 15
-      }
+      requiredClientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
     });
   }
 
   // eslint-disable-next-line class-methods-use-this
-  run(msg): Promise<DiscordBot.Message> {
+  messageRun(msg): Promise<DiscordBot.Message> {
     const helpEmbed = new DiscordBot.MessageEmbed()
       .setTitle("Help Info")
       .setDescription(

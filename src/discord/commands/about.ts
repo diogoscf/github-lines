@@ -1,19 +1,13 @@
 import * as DiscordBot from "discord.js";
-import { RLCommand } from "../types_discord";
+import { Command } from "@sapphire/framework";
 
-export class AboutCommand extends RLCommand {
+export class AboutCommand extends Command {
   constructor(client) {
     super(client, {
       name: "about",
       aliases: ["stats"],
-      memberName: "about",
-      group: "commands",
       description: "Info about the bot",
-      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
-      throttling: {
-        usages: 1,
-        duration: 15
-      }
+      requiredClientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
     });
   }
 
@@ -41,7 +35,7 @@ export class AboutCommand extends RLCommand {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async run(msg): Promise<DiscordBot.Message> {
+  async messageRun(msg): Promise<DiscordBot.Message> {
     const botApp = await msg.client.fetchApplication();
     let userCount = 0;
     msg.client.guilds.cache.forEach((guild) => {

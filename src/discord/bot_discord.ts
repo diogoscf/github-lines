@@ -2,7 +2,7 @@
  * Discord Bot. It takes advantage of the functions defined in core.ts.
  */
 
-import * as DiscordCommandBot from "discord.js-commando";
+import * as SapphireBot from "@sapphire/framework";
 import * as DiscordBot from "discord.js";
 
 import * as Prismalytics from "prismajs";
@@ -11,7 +11,7 @@ import * as path from "path";
 import { DiscordConfig } from "./types_discord";
 import { Core } from "../core/core";
 
-export class GHLDiscordBot extends DiscordCommandBot.Client {
+export class GHLDiscordBot extends SapphireBot.SapphireClient {
   readonly core: Core;
 
   readonly config: DiscordConfig;
@@ -20,9 +20,9 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
 
   constructor(core: Core, config: DiscordConfig) {
     super({
-      owner: config.owner,
-      commandPrefix: config.commandPrefix,
-      nonCommandEditable: config.nonCommandEditable
+      defaultPrefix: config.defaultPrefix,
+      caseInsensitiveCommands: config.caseInsensitiveCommands,
+      intents: config.intents
     });
 
     this.core = core;
@@ -37,8 +37,8 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     }
 
     this.login(this.config.DISCORD_TOKEN)
-      .then(() => this.setupCommands())
-      .catch(console.error);
+      //.then(() => this.setupCommands())
+      //.catch(console.error);
   }
 
   /**
@@ -57,7 +57,7 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
 
         if (toDelete) {
           setTimeout(() => sentmsg.delete().catch(() => null), 5000); // errors ignored - someone else deleted
-        } else if (!sentmsg.guild || sentmsg.channel.permissionsFor(sentmsg.guild.me).has("ADD_REACTIONS")) {
+        } else if (!sentmsg.guild || sentmsg.channel.partial || sentmsg.channel.permissionsFor(sentmsg.guild.me).has("ADD_REACTIONS")) {
           const botReaction = await sentmsg.react("🗑️");
 
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
@@ -113,7 +113,7 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     console.log("Started Discord bot.");
   }
 
-  private setupCommands(): void {
+  /*private setupCommands(): void {
     this.registry
       .registerDefaultTypes()
       .registerDefaultGroups()
@@ -129,7 +129,7 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
         filter: /^([^.].*)\.(js|ts)$/,
         dirname: path.join(__dirname, "commands")
       });
-  }
+  }*/
 
   /**
    * This is Discord-level handleMessage(). It calls core-level handleMesasge() and then
