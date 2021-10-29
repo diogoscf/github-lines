@@ -18,7 +18,7 @@ export class DiscordConfig {
     this.DISCORD_TOKEN = dstoken;
     this.PRISMA_TOKEN = ptoken;
     this.TOPGG = topgg;
-    this.owner = "404599570090164224"; // diogoscf#7418
+    this.owner = "817789370022101053"; // diogoscf#2167
     this.commandPrefix = ";";
     this.nonCommandEditable = false;
   }
