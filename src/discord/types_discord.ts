@@ -1,6 +1,5 @@
 import { Intents } from "discord.js";
 import { CooldownOptions } from "@sapphire/framework";
-import * as path from "path";
 
 /**
  * Discord-specific configuration.
@@ -40,7 +39,6 @@ export class DiscordConfig {
     ]);
     this.defaultCooldown = { delay: 15000, limit: 1 };
     this.baseUserDirectory = __dirname;
-    console.log(this.baseUserDirectory)
   }
 }
 
