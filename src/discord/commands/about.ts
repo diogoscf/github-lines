@@ -1,19 +1,14 @@
 import * as DiscordBot from "discord.js";
-import { RLCommand } from "../types_discord";
+import { Command } from "@sapphire/framework";
+import { PieceContext } from "@sapphire/pieces";
 
-export class AboutCommand extends RLCommand {
-  constructor(client) {
+export class AboutCommand extends Command {
+  constructor(client: PieceContext) {
     super(client, {
       name: "about",
       aliases: ["stats"],
-      memberName: "about",
-      group: "commands",
       description: "Info about the bot",
-      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
-      throttling: {
-        usages: 1,
-        duration: 15
-      }
+      requiredClientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
     });
   }
 
@@ -41,12 +36,12 @@ export class AboutCommand extends RLCommand {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async run(msg): Promise<DiscordBot.Message> {
-    const botApp = await msg.client.fetchApplication();
+  async messageRun(msg: DiscordBot.Message): Promise<DiscordBot.Message> {
     let userCount = 0;
     msg.client.guilds.cache.forEach((guild) => {
       userCount += guild.memberCount;
     });
+    const uptime = msg.client.uptime ? AboutCommand.convertMS(msg.client.uptime) : "N/A";
     const aboutEmbed = new DiscordBot.MessageEmbed()
       .setTitle("About GitHub Lines")
       .setDescription(
@@ -56,17 +51,17 @@ export class AboutCommand extends RLCommand {
       .addFields(
         {
           name: "Guild Count",
-          value: msg.client.guilds.cache.size,
+          value: msg.client.guilds.cache.size.toString(),
           inline: true
         },
         {
           name: "User Count",
-          value: userCount,
+          value: userCount.toString(),
           inline: true
         },
         {
           name: "Uptime",
-          value: AboutCommand.convertMS(msg.client.uptime),
+          value: uptime,
           inline: true
         },
         {
@@ -85,6 +80,6 @@ export class AboutCommand extends RLCommand {
         "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
       );
 
-    return msg.channel.send(aboutEmbed);
+    return msg.channel.send({ embeds: [aboutEmbed] });
   }
 }

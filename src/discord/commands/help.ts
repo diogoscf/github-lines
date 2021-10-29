@@ -1,23 +1,18 @@
 import * as DiscordBot from "discord.js";
-import { RLCommand } from "../types_discord";
+import { Command } from "@sapphire/framework";
+import { PieceContext } from "@sapphire/pieces";
 
-export class HelpCommand extends RLCommand {
-  constructor(client) {
+export class HelpCommand extends Command {
+  constructor(client: PieceContext) {
     super(client, {
       name: "help",
-      memberName: "help",
-      group: "commands",
       description: "Displays a help message",
-      clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
-      throttling: {
-        usages: 1,
-        duration: 15
-      }
+      requiredClientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
     });
   }
 
   // eslint-disable-next-line class-methods-use-this
-  run(msg): Promise<DiscordBot.Message> {
+  messageRun(msg: DiscordBot.Message): Promise<DiscordBot.Message> {
     const helpEmbed = new DiscordBot.MessageEmbed()
       .setTitle("Help Info")
       .setDescription(
@@ -57,6 +52,6 @@ export class HelpCommand extends RLCommand {
         }
       );
 
-    return msg.channel.send(helpEmbed);
+    return msg.channel.send({ embeds: [helpEmbed] });
   }
 }

@@ -2,16 +2,15 @@
  * Discord Bot. It takes advantage of the functions defined in core.ts.
  */
 
-import * as DiscordCommandBot from "discord.js-commando";
+import * as SapphireBot from "@sapphire/framework";
 import * as DiscordBot from "discord.js";
 
 import * as Prismalytics from "prismajs";
 import * as Dbl from "dblapi.js";
-import * as path from "path";
-import { DiscordConfig } from "./types_discord";
-import { Core } from "../core/core";
+import type { DiscordConfig } from "./types_discord";
+import type { Core } from "../core/core";
 
-export class GHLDiscordBot extends DiscordCommandBot.Client {
+export class GHLDiscordBot extends SapphireBot.SapphireClient {
   readonly core: Core;
 
   readonly config: DiscordConfig;
@@ -20,9 +19,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
 
   constructor(core: Core, config: DiscordConfig) {
     super({
-      owner: config.owner,
-      commandPrefix: config.commandPrefix,
-      nonCommandEditable: config.nonCommandEditable
+      defaultPrefix: config.defaultPrefix,
+      caseInsensitiveCommands: config.caseInsensitiveCommands,
+      intents: config.intents,
+      defaultCooldown: config.defaultCooldown,
+      baseUserDirectory: config.baseUserDirectory
     });
 
     this.core = core;
@@ -36,9 +37,7 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       const dbl = new Dbl(this.config.TOPGG, this); // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
     }
 
-    this.login(this.config.DISCORD_TOKEN)
-      .then(() => this.setupCommands())
-      .catch(console.error);
+    this.login(this.config.DISCORD_TOKEN);
   }
 
   /**
@@ -46,22 +45,27 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
    */
   start(): void {
     // Handles all messages and checks whether they contain a resolvable link
-    this.on("message", async (msg) => {
+    this.on("messageCreate", async (msg) => {
       if (msg.author.bot) {
         return;
       }
 
-      const [botMsg, toDelete] = await this.handleMessage(msg);
+      const { botMsg, toDelete } = await this.handleMessage(msg);
       if (botMsg) {
         const sentmsg = await msg.channel.send(botMsg);
+        const botGuildMember = sentmsg.guild?.me;
 
         if (toDelete) {
-          sentmsg.delete({ timeout: 5000 }).catch(() => null); // error ignored - someone else deleted
-        } else if (!sentmsg.guild || sentmsg.guild.me?.permissionsIn(sentmsg.channel).has("ADD_REACTIONS")) {
+          setTimeout(() => sentmsg.delete().catch(() => null), 5000); // errors ignored - someone else deleted
+        } else if (
+          sentmsg.channel.partial ||
+          sentmsg.channel instanceof DiscordBot.DMChannel ||
+          (botGuildMember && sentmsg.channel.permissionsFor(sentmsg.guild.me).has("ADD_REACTIONS"))
+        ) {
           const botReaction = await sentmsg.react("🗑️");
 
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
-          const collector = sentmsg.createReactionCollector(filter, { time: 15000 });
+          const collector = sentmsg.createReactionCollector({ filter, time: 15000 });
           collector.on("collect", () => {
             if (!sentmsg.deleted) sentmsg.delete().catch(() => null); // error ignored - someone else deleted
           });
@@ -98,38 +102,20 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       // If there is a system channel set (and the bot has perms there), send message there
       // Otherwise, send it to #general if it exists, or to the first text channel
       if (guild.systemChannel && guild.me?.permissionsIn(guild.systemChannel).has("SEND_MESSAGES")) {
-        guild.systemChannel.send(joinEmbed);
+        guild.systemChannel.send({ embeds: [joinEmbed] });
         return;
       }
 
-      const textChannels = guild.channels.cache
-        .array()
-        .filter((c): c is DiscordBot.TextChannel => c instanceof DiscordBot.TextChannel);
+      const textChannels = [...guild.channels.cache.values()].filter(
+        (c): c is DiscordBot.TextChannel => c instanceof DiscordBot.TextChannel
+      );
       let channel = textChannels.find((c) => c.name === "general" && guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
       if (!channel) channel = textChannels.find((c) => guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
 
-      channel?.send(joinEmbed);
+      channel?.send({ embeds: [joinEmbed] });
     });
 
     console.log("Started Discord bot.");
-  }
-
-  private setupCommands(): void {
-    this.registry
-      .registerDefaultTypes()
-      .registerDefaultGroups()
-      .registerDefaultCommands({
-        help: false, // custom help command
-        prefix: false, // no db for now
-        ping: false, // custom ping command
-        unknownCommand: false, // bots that do this are trash
-        commandState: false, // again, no db
-        eval: true
-      })
-      .registerCommandsIn({
-        filter: /^([^.].*)\.(js|ts)$/,
-        dirname: path.join(__dirname, "commands")
-      });
   }
 
   /**
@@ -137,11 +123,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
    * performs necessary formatting and validation.
    * @param msg Discord message object
    */
-  async handleMessage(msg: DiscordBot.Message): Promise<(null | string | boolean)[]> {
+  async handleMessage(msg: DiscordBot.Message): Promise<{ botMsg: null | string; toDelete: boolean }> {
     const { msgList, totalLines } = await this.core.handleMessage(msg.content);
 
     if (totalLines > 50) {
-      return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50", true];
+      return { botMsg: "Sorry, but to prevent spam, we limit the number of lines displayed at 50", toDelete: true };
     }
 
     const messages = msgList.map(
@@ -151,10 +137,11 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
     const botMsg = messages.join("\n") || null;
 
     if (botMsg && botMsg.length >= 2000) {
-      return [
-        "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet",
-        true
-      ];
+      return {
+        botMsg:
+          "Sorry but there is a 2000 character limit on Discord, so we were unable to display the desired snippet",
+        toDelete: true
+      };
     }
 
     if (botMsg) {
@@ -171,6 +158,6 @@ export class GHLDiscordBot extends DiscordCommandBot.Client {
       }
     }
 
-    return [botMsg, false];
+    return { botMsg, toDelete: false };
   }
 }
