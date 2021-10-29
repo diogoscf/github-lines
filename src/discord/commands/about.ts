@@ -1,8 +1,9 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
+import { PieceContext } from "@sapphire/pieces";
 
 export class AboutCommand extends Command {
-  constructor(client) {
+  constructor(client: PieceContext) {
     super(client, {
       name: "about",
       aliases: ["stats"],
@@ -35,12 +36,12 @@ export class AboutCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async messageRun(msg): Promise<DiscordBot.Message> {
-    const botApp = await msg.client.fetchApplication();
+  async messageRun(msg: DiscordBot.Message): Promise<DiscordBot.Message> {
     let userCount = 0;
     msg.client.guilds.cache.forEach((guild) => {
       userCount += guild.memberCount;
     });
+    const uptime = msg.client.uptime ? AboutCommand.convertMS(msg.client.uptime) : "N/A";
     const aboutEmbed = new DiscordBot.MessageEmbed()
       .setTitle("About GitHub Lines")
       .setDescription(
@@ -60,7 +61,7 @@ export class AboutCommand extends Command {
         },
         {
           name: "Uptime",
-          value: AboutCommand.convertMS(msg.client.uptime),
+          value: uptime,
           inline: true
         },
         {
@@ -79,6 +80,6 @@ export class AboutCommand extends Command {
         "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
       );
 
-    return msg.channel.send(aboutEmbed);
+    return msg.channel.send({ embeds: [aboutEmbed] });
   }
 }

@@ -7,7 +7,6 @@ import {
   SimpleFsStorageProvider,
   AutojoinRoomsMixin,
   LogLevel,
-  RichReply,
   RichConsoleLogger,
   LogService
 } from "matrix-bot-sdk";

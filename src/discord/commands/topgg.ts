@@ -1,8 +1,9 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
+import { PieceContext } from "@sapphire/pieces";
 
 export class TopggCommand extends Command {
-  constructor(client) {
+  constructor(client: PieceContext) {
     super(client, {
       name: "topgg",
       aliases: ["invite", "vote"],
@@ -11,7 +12,7 @@ export class TopggCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  messageRun(msg): Promise<DiscordBot.Message> {
-    return msg.reply("We appreciate votes :heart: https://top.gg/bot/708282735227174922");
+  messageRun(msg: DiscordBot.Message): Promise<DiscordBot.Message> {
+    return msg.channel.send("We appreciate votes :heart: https://top.gg/bot/708282735227174922");
   }
 }

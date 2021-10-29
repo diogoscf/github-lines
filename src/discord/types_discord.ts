@@ -1,5 +1,6 @@
 import { Intents } from "discord.js";
 import { CooldownOptions } from "@sapphire/framework";
+import * as path from "path";
 
 /**
  * Discord-specific configuration.
@@ -19,7 +20,9 @@ export class DiscordConfig {
 
   readonly intents: Intents;
 
-  readonly defaultCooldown: CooldownOptions
+  readonly defaultCooldown: CooldownOptions;
+
+  readonly baseUserDirectory: string;
 
   constructor(dstoken: string, ptoken?: string, topgg?: string) {
     this.DISCORD_TOKEN = dstoken;
@@ -28,18 +31,26 @@ export class DiscordConfig {
     this.owner = "817789370022101053"; // diogoscf#2167
     this.defaultPrefix = ";";
     this.caseInsensitiveCommands = true;
-    this.intents = new Intents(["GUILDS", "GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS", "DIRECT_MESSAGES", "DIRECT_MESSAGE_REACTIONS"]);
-    this.defaultCooldown = { delay: 15, limit: 1 }
+    this.intents = new Intents([
+      "GUILDS",
+      "GUILD_MESSAGES",
+      "GUILD_MESSAGE_REACTIONS",
+      "DIRECT_MESSAGES",
+      "DIRECT_MESSAGE_REACTIONS"
+    ]);
+    this.defaultCooldown = { delay: 15000, limit: 1 };
+    this.baseUserDirectory = __dirname;
+    console.log(this.baseUserDirectory)
   }
 }
 
-/*import { Command, CommandoMessage } from "@sapphire/framework";
+/* import { Command, CommandoMessage } from "@sapphire/framework";
 import { Message, PermissionString } from "discord.js";
 */
 /**
  * custom class for custom rate-limiting
  */
-/*export abstract class RLCommand extends Command {
+/* export abstract class RLCommand extends Command {
   async onBlock(
     message: CommandoMessage,
     reason: string,
@@ -63,4 +74,4 @@ import { Message, PermissionString } from "discord.js";
 
     return response;
   }
-}*/
+} */

@@ -1,8 +1,9 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
+import { PieceContext } from "@sapphire/pieces";
 
 export class HelpCommand extends Command {
-  constructor(client) {
+  constructor(client: PieceContext) {
     super(client, {
       name: "help",
       description: "Displays a help message",
@@ -11,7 +12,7 @@ export class HelpCommand extends Command {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  messageRun(msg): Promise<DiscordBot.Message> {
+  messageRun(msg: DiscordBot.Message): Promise<DiscordBot.Message> {
     const helpEmbed = new DiscordBot.MessageEmbed()
       .setTitle("Help Info")
       .setDescription(
@@ -51,6 +52,6 @@ export class HelpCommand extends Command {
         }
       );
 
-    return msg.channel.send(helpEmbed);
+    return msg.channel.send({ embeds: [helpEmbed] });
   }
 }
