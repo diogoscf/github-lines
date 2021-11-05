@@ -13,7 +13,7 @@ Example:
 
 ![Github Lines Example](https://github.com/diogoscf/github-lines/raw/master/assets/github-lines-example.PNG)
 
-You can add the bot to your server by clicking [this link](https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=26688&scope=bot)
+You can add the bot to your server by clicking [this link](https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=274877933632&scope=bot%20applications.commands)
 
 ## Commands
 
