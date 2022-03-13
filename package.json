@@ -37,7 +37,7 @@
     "discord.js-commando": "^0.12.3",
     "dotenv": "^8.2.0",
     "matrix-bot-sdk": "^0.5.11",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "node-telegram-bot-api": "0.50.0",
     "prismajs": "^1.0.2",
     "ts-is-present": "^1.1.5"
