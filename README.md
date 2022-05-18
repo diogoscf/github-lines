@@ -14,6 +14,8 @@ GitHub Lines is a minimal and non-intrusive multi-platform bot that displays one
 more lines when mentioned in a GitHub (or GitLab) link. It also supports syntax
 highlighting!
 
+## Discord
+
 Example:
 
 ![Github LinesExample][example-image]
@@ -21,7 +23,6 @@ Example:
 ### Adding to a Discord server
 
 Add the bot to your server by clicking [this link][discord-add-link].
-
 
 ### Adding to a Telegram group
 
