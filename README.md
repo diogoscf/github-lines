@@ -48,11 +48,11 @@ To run the bot yourself, follow these simple steps:
 
  1. Clone the repo (`git clone https://github.com/diogoscf/github-lines.git`)
  2. Copy `.env.example` into `.env` and paste your Discord bot token (obtain one
-    [here](https://discord.com/developers/applications/)) after `DISCORD_TOKEN=`
+    [here](https://discord.com/developers/applications)) after `DISCORD_TOKEN=`
  3. Run `npm install`
  4. Run `npm start`
 
-If you wish to, you may also specify a [top.gg](https://top.gg/) token (after
+If you wish to, you may also specify a [top.gg](https://top.gg) token (after
 `TOPGG=`in the `.env` file), and/or a
 [Prismalytics](https://prismalytics.herokuapp.com) token (after
 `PRISMA_TOKEN=`in the `.env` file). You can also specify a GitHub OAuth token
