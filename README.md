@@ -10,7 +10,7 @@
 
 # GitHub Lines
 
-GitHub Lines is a minimal and non-intrusive Discord bot that displays one or
+GitHub Lines is a minimal and non-intrusive multi-platform bot that displays one or
 more lines when mentioned in a GitHub (or GitLab) link. It also supports syntax
 highlighting!
 
@@ -27,7 +27,7 @@ Add the bot to your server by clicking [this link][discord-add-link].
 
 Add user [githublinesbot][telegram-link] to the group.
 
-## Commands
+## Discord Commands
 
 GitHub Lines has a few commands that you can use, although no commands are
 necessary to display the lines. The prefix for the commands is ";"
@@ -65,8 +65,7 @@ any ideas, or open a PR if you want to contribute directly.
 
 ### Contributors
 
-- Diogo S.C. Fernandes [@diogoscf](https://github.com/diogoscf/) - Creator,
-  Discord bot
+- Diogo S.C. Fernandes [@diogoscf](https://github.com/diogoscf/) - Creator / Main Dev / Discord Bot
 - Aadi Bajpai [@aadibajpai](https://github.com/aadibajpai/) - Idea for the bot
 - Bartek Pacia [@bartekpacia](https://github.com/bartekpacia) - Telegram bot
 - Srevin Saju [@srevinsaju](https://github.com/srevinsaju) - Matrix bot
