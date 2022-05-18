@@ -1,34 +1,11 @@
-[![inviteme][discord-topgg-badge]][discord-topgg] 
+[![Discord][discord-badge]][discord-link]
+[![Telegram][telegram-badge]][telegram-link]
 
-[![Up Status][discord-topgg-status-badge]][discord-topgg]
-
-[![Servers][discord-topgg-servers-badge]][discord-topgg]
-
+[![inviteme][discord-topgg-badge]][discord-link]
+[![Up Status][discord-topgg-status-badge]][discord-link]
+[![Servers][discord-topgg-servers-badge]][discord-link]
 [![TravisCI][travis-badge]][travis-link]
-
 [![Codacy][codacy-badge]][codacy-link]
-
-[discord-topgg-badge]:
-    https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA
-
-[discord-topgg]: https://top.gg/bot/708282735227174922 
-
-[discord-topgg-status-badge]:
-    https://top.gg/api/widget/status/708282735227174922.svg
-
-
-[discord-topgg-servers-badge]:
-    https://top.gg/api/widget/servers/708282735227174922.svg
-
-[codacy-badge]:
-    https://api.codacy.com/project/badge/Grade/baf4e71f649147189e973c38fd5cd425
-
-[travis-badge]: https://travis-ci.com/diogoscf/github-lines.svg?branch=master
-
-[travis-link]: https://travis-ci.com/diogoscf/github-lines
-    
-[codacy-link]:
-    https://app.codacy.com/manual/diogoscf/github-lines?utm_source=github.com&utm_medium=referral&utm_content=diogoscf/github-lines&utm_campaign=Badge_Grade_Dashboard
 
 
 # GitHub Lines
@@ -96,6 +73,35 @@ any ideas, or open a PR if you want to contribute directly.
 
 [example-image]:
     https://github.com/diogoscf/github-lines/raw/master/assets/github-lines-example.PNG
+
+[discord-badge]:
+    https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white
+
 [telegram-badge]:
     https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white
-[telegram]: https://t.me/githublinesbot
+
+[telegram-link]: https://t.me/githublinesbot
+
+[discord-topgg-badge]:
+    https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA
+
+[discord-link]: https://top.gg/bot/708282735227174922
+
+[discord-add-link]: https://discord.com/api/oauth2/authorize?client_id=708282735227174922&permissions=274877933632&scope=bot%20applications.commands
+
+[discord-topgg-status-badge]:
+    https://top.gg/api/widget/status/708282735227174922.svg
+
+[discord-topgg-servers-badge]:
+    https://top.gg/api/widget/servers/708282735227174922.svg
+
+[codacy-badge]:
+    https://api.codacy.com/project/badge/Grade/baf4e71f649147189e973c38fd5cd425
+
+[travis-badge]:
+    https://app.travis-ci.com/diogoscf/github-lines.svg?branch=master
+
+[travis-link]: https://app.travis-ci.com/diogoscf/github-lines
+
+[codacy-link]:
+    https://app.codacy.com/manual/diogoscf/github-lines?utm_source=github.com&utm_medium=referral&utm_content=diogoscf/github-lines&utm_campaign=Badge_Grade_Dashboard
