@@ -153,7 +153,7 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
 
       if (this.analytics) {
         const bogusMsg = msg;
-        bogusMsg.content = ";link"; // this is retarded, waiting for prismalytics to support command-less messages
+        bogusMsg.content = ";link"; // this is silly, waiting for prismalytics to support command-less messages
         this.analytics.send(bogusMsg);
       }
     }
