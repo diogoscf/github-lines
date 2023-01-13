@@ -24,10 +24,6 @@ Example:
 
 Add the bot to your server by clicking [this link][discord-add-link].
 
-### Adding to a Telegram group
-
-Add user [githublinesbot][telegram-link] to the group.
-
 ## Discord Commands
 
 GitHub Lines has a few commands that you can use, although no commands are
@@ -41,6 +37,10 @@ necessary to display the lines. The prefix for the commands is ";"
     you can invite the bot to your server
  5. `;ping` - Returns the bot's latency
  6. `;github` or `;source` - Returns the bot's source GitHub repo
+ 
+## Telegram
+
+Add user [githublinesbot][telegram-link] to the group.
 
 ## Running your own
 
@@ -66,7 +66,7 @@ any ideas, or open a PR if you want to contribute directly.
 
 ### Contributors
 
-- Diogo S.C. Fernandes [@diogoscf](https://github.com/diogoscf/) - Creator / Main Dev / Discord Bot
+- Diogo S.C. Fernandes [@diogoscf](https://github.com/diogoscf/) - Creator / Main Dev / Discord bot
 - Aadi Bajpai [@aadibajpai](https://github.com/aadibajpai/) - Idea for the bot
 - Bartek Pacia [@bartekpacia](https://github.com/bartekpacia) - Telegram bot
 - Srevin Saju [@srevinsaju](https://github.com/srevinsaju) - Matrix bot
