@@ -59,6 +59,7 @@ If you wish to, you may also specify a [top.gg](https://top.gg) token (after
 (after `GITHUB_TOKEN=`in the `.env` file) to avoid rate limits when accessing
 the API.
 
+
 ## Contributing
 
 We'd happily accept any contributions to this project. Open an issue if you have
