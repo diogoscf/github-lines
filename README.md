@@ -62,7 +62,7 @@ the API.
 ## Contributing
 
 We'd happily accept any contributions to this project. Open an issue if you have
-any ideas, or open a PR if you want to contribute directly.
+any ideas, or open a PR if you'd like to contribute directly.
 
 ### Contributors
 
