@@ -9,8 +9,7 @@ import { MatrixConfig } from "./matrix/types_matrix";
 import { TelegramConfig } from "./telegram/types_telegram";
 import { DiscordConfig } from "./discord/types_discord";
 
-const { DISCORD_TOKEN, TELEGRAM_TOKEN, TOPGG, PRISMA_TOKEN, GITHUB_TOKEN, MATRIX_TOKEN, MATRIX_HOMESERVER } =
-  process.env;
+const { DISCORD_TOKEN, TELEGRAM_TOKEN, TOPGG, GITHUB_TOKEN, MATRIX_TOKEN, MATRIX_HOMESERVER } = process.env;
 
 async function main(): Promise<void> {
   const coreLogic = new CoreLogic(GITHUB_TOKEN);
@@ -21,7 +20,7 @@ async function main(): Promise<void> {
 
   if (discordRunning) {
     if (DISCORD_TOKEN != null) {
-      const discordBot = new discord.GHLDiscordBot(coreLogic, new DiscordConfig(DISCORD_TOKEN, PRISMA_TOKEN, TOPGG));
+      const discordBot = new discord.GHLDiscordBot(coreLogic, new DiscordConfig(DISCORD_TOKEN, TOPGG));
       discordBot.start();
     } else {
       console.error("DISCORD_TOKEN is null/undefined");

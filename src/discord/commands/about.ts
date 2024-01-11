@@ -76,7 +76,7 @@ export class AboutCommand extends Command {
       )
       .setFooter({
         text: "Made by diogoscf",
-        iconURL: "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
+        iconURL: "https://cdn.discordapp.com/avatars/404599570090164224/b12c8c307ebd79beee56ec228e62b2ce.webp"
       });
 
     return msg.channel.send({ embeds: [aboutEmbed] });

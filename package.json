@@ -27,26 +27,18 @@
     "lint-fix": "eslint src --ext js,ts --fix"
   },
   "dependencies": {
-    "@sapphire/decorators": "^6.0.3",
     "@sapphire/framework": "^5.0.6",
-    "@sapphire/pieces": "^4.2.0",
-    "@sapphire/plugin-editable-commands": "^4.0.1",
-    "@sapphire/ts-config": "^5.0.0",
     "dblapi.js": "^2.4.1",
     "discord.js": "^14.14.1",
-    "discord.js-commando": "^0.12.3",
     "dotenv": "^16.3.1",
     "matrix-bot-sdk": "^0.7.0",
     "node-fetch": "^2.7.0",
     "node-telegram-bot-api": "0.64.0",
-    "prismajs": "^1.0.2",
     "ts-is-present": "^1.2.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
-    "@types/core-js": "^2.5.8",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.11.0",
     "@types/node-telegram-bot-api": "^0.64.2",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",

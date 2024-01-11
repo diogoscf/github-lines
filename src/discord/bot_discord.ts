@@ -5,7 +5,6 @@
 import * as SapphireBot from "@sapphire/framework";
 import * as DiscordBot from "discord.js";
 
-import * as Prismalytics from "prismajs";
 import * as Dbl from "dblapi.js";
 import type { DiscordConfig } from "./types_discord";
 import type { CoreLogic } from "../core/coreLogic";
@@ -14,8 +13,6 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
   readonly coreLogic: CoreLogic;
 
   readonly config: DiscordConfig;
-
-  readonly analytics: Prismalytics;
 
   constructor(coreLogic: CoreLogic, config: DiscordConfig) {
     super({
@@ -29,10 +26,6 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
 
     this.coreLogic = coreLogic;
     this.config = config;
-
-    if (this.config.PRISMA_TOKEN) {
-      this.analytics = new Prismalytics(this.config.PRISMA_TOKEN);
-    }
 
     if (this.config.TOPGG) {
       const dbl = new Dbl(this.config.TOPGG, this); // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -80,10 +73,6 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
       this?.user?.setActivity("for GitHub links", {
         type: DiscordBot.ActivityType.Watching
       });
-    });
-
-    this.on("commandRun", (a, b, msg) => {
-      if (this.analytics) this.analytics.send(msg);
     });
 
     this.on("guildCreate", (guild) => {
@@ -146,18 +135,10 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
       };
     }
 
-    if (botMsg) {
-      if (msg.deletable) {
-        // can always supress embed if deletable
-        // it can take a few ms before the supress can be registered
-        setTimeout(() => msg.suppressEmbeds(true).catch(console.error), 100);
-      }
-
-      if (this.analytics) {
-        const bogusMsg = msg;
-        bogusMsg.content = ";link"; // this is silly, waiting for prismalytics to support command-less messages
-        this.analytics.send(bogusMsg);
-      }
+    if (botMsg && msg.deletable) {
+      // can always supress embed if deletable
+      // it can take a few ms before the supress can be registered
+      setTimeout(() => msg.suppressEmbeds(true).catch(console.error), 100);
     }
 
     return { botMsg, toDelete: false };

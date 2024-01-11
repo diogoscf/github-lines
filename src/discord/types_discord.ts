@@ -7,8 +7,6 @@ import { CooldownOptions } from "@sapphire/framework";
 export class DiscordConfig {
   readonly DISCORD_TOKEN: string;
 
-  readonly PRISMA_TOKEN: string | undefined;
-
   readonly TOPGG: string | undefined;
 
   readonly owner: string;
@@ -25,9 +23,8 @@ export class DiscordConfig {
 
   readonly baseUserDirectory: string;
 
-  constructor(dstoken: string, ptoken?: string, topgg?: string) {
+  constructor(dstoken: string, topgg?: string) {
     this.DISCORD_TOKEN = dstoken;
-    this.PRISMA_TOKEN = ptoken;
     this.TOPGG = topgg;
     this.owner = "817789370022101053"; // diogoscf
     this.defaultPrefix = ";";
