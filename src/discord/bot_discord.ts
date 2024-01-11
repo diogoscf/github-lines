@@ -1,5 +1,5 @@
 /**
- * Discord Bot. It takes advantage of the functions defined in core.ts.
+ * Discord Bot. It takes advantage of the functions defined in coreLogic.ts.
  */
 
 import * as SapphireBot from "@sapphire/framework";
@@ -8,25 +8,26 @@ import * as DiscordBot from "discord.js";
 import * as Prismalytics from "prismajs";
 import * as Dbl from "dblapi.js";
 import type { DiscordConfig } from "./types_discord";
-import type { Core } from "../core/core";
+import type { CoreLogic } from "../core/coreLogic";
 
 export class GHLDiscordBot extends SapphireBot.SapphireClient {
-  readonly core: Core;
+  readonly coreLogic: CoreLogic;
 
   readonly config: DiscordConfig;
 
   readonly analytics: Prismalytics;
 
-  constructor(core: Core, config: DiscordConfig) {
+  constructor(coreLogic: CoreLogic, config: DiscordConfig) {
     super({
       defaultPrefix: config.defaultPrefix,
       caseInsensitiveCommands: config.caseInsensitiveCommands,
       intents: config.intents,
+      loadMessageCommandListeners: config.loadMessageCommandListeners,
       defaultCooldown: config.defaultCooldown,
       baseUserDirectory: config.baseUserDirectory
     });
 
-    this.core = core;
+    this.coreLogic = coreLogic;
     this.config = config;
 
     if (this.config.PRISMA_TOKEN) {
@@ -53,24 +54,23 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
       const { botMsg, toDelete } = await this.handleMessage(msg);
       if (botMsg) {
         const sentmsg = await msg.channel.send(botMsg);
-        const botGuildMember = sentmsg.guild?.me;
 
         if (toDelete) {
           setTimeout(() => sentmsg.delete().catch(() => null), 5000); // errors ignored - someone else deleted
         } else if (
           sentmsg.channel.partial ||
           sentmsg.channel instanceof DiscordBot.DMChannel ||
-          (botGuildMember && sentmsg.channel.permissionsFor(sentmsg.guild.me).has("ADD_REACTIONS"))
+          (sentmsg.guild?.members.me && sentmsg.channel.permissionsFor(sentmsg.guild.members.me).has("AddReactions"))
         ) {
           const botReaction = await sentmsg.react("🗑️");
 
           const filter = (reaction, user): boolean => reaction.emoji.name === "🗑️" && user.id === msg.author.id;
           const collector = sentmsg.createReactionCollector({ filter, time: 15000 });
           collector.on("collect", () => {
-            if (!sentmsg.deleted) sentmsg.delete().catch(() => null); // error ignored - someone else deleted
+            sentmsg.delete().catch(() => null); // error ignored - someone else deleted
           });
           collector.on("end", () => {
-            if (!sentmsg.deleted) botReaction.users.remove().catch(() => null); // error ignored - someone else removed
+            botReaction.users.remove().catch(() => null); // error ignored - someone else removed
           });
         }
       }
@@ -78,7 +78,7 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
 
     this.on("ready", () => {
       this?.user?.setActivity("for GitHub links", {
-        type: "WATCHING"
+        type: DiscordBot.ActivityType.Watching
       });
     });
 
@@ -89,7 +89,7 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
     this.on("guildCreate", (guild) => {
       console.log(`Joined new server ${guild.name}`);
 
-      const joinEmbed = new DiscordBot.MessageEmbed()
+      const joinEmbed = new DiscordBot.EmbedBuilder()
         .setTitle("Thanks for adding me to your server! :heart:")
         .setDescription(
           "GitHub Lines runs automatically, without need for commands or configuration! " +
@@ -101,7 +101,7 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
 
       // If there is a system channel set (and the bot has perms there), send message there
       // Otherwise, send it to #general if it exists, or to the first text channel
-      if (guild.systemChannel && guild.me?.permissionsIn(guild.systemChannel).has("SEND_MESSAGES")) {
+      if (guild.systemChannel && guild.members.me?.permissionsIn(guild.systemChannel).has("SendMessages")) {
         guild.systemChannel.send({ embeds: [joinEmbed] });
         return;
       }
@@ -109,8 +109,10 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
       const textChannels = [...guild.channels.cache.values()].filter(
         (c): c is DiscordBot.TextChannel => c instanceof DiscordBot.TextChannel
       );
-      let channel = textChannels.find((c) => c.name === "general" && guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
-      if (!channel) channel = textChannels.find((c) => guild.me?.permissionsIn(c).has("SEND_MESSAGES"));
+      let channel = textChannels.find(
+        (c) => c.name === "general" && guild.members.me?.permissionsIn(c).has("SendMessages")
+      );
+      if (!channel) channel = textChannels.find((c) => guild.members.me?.permissionsIn(c).has("SendMessages"));
 
       channel?.send({ embeds: [joinEmbed] });
     });
@@ -119,12 +121,12 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
   }
 
   /**
-   * This is Discord-level handleMessage(). It calls core-level handleMesasge() and then
+   * This is Discord-level handleMessage(). It calls coreLogic-level handleMessage() and then
    * performs necessary formatting and validation.
    * @param msg Discord message object
    */
   async handleMessage(msg: DiscordBot.Message): Promise<{ botMsg: null | string; toDelete: boolean }> {
-    const { msgList, totalLines } = await this.core.handleMessage(msg.content);
+    const { msgList, totalLines } = await this.coreLogic.handleMessage(msg.content);
 
     if (totalLines > 50) {
       return { botMsg: "Sorry, but to prevent spam, we limit the number of lines displayed at 50", toDelete: true };

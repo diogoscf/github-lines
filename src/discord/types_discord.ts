@@ -1,4 +1,4 @@
-import { Intents } from "discord.js";
+import { ClientOptions } from "discord.js";
 import { CooldownOptions } from "@sapphire/framework";
 
 /**
@@ -17,7 +17,9 @@ export class DiscordConfig {
 
   readonly caseInsensitiveCommands: boolean;
 
-  readonly intents: Intents;
+  readonly intents: ClientOptions["intents"];
+
+  readonly loadMessageCommandListeners: boolean;
 
   readonly defaultCooldown: CooldownOptions;
 
@@ -27,16 +29,18 @@ export class DiscordConfig {
     this.DISCORD_TOKEN = dstoken;
     this.PRISMA_TOKEN = ptoken;
     this.TOPGG = topgg;
-    this.owner = "817789370022101053"; // diogoscf#2167
+    this.owner = "817789370022101053"; // diogoscf
     this.defaultPrefix = ";";
     this.caseInsensitiveCommands = true;
-    this.intents = new Intents([
-      "GUILDS",
-      "GUILD_MESSAGES",
-      "GUILD_MESSAGE_REACTIONS",
-      "DIRECT_MESSAGES",
-      "DIRECT_MESSAGE_REACTIONS"
-    ]);
+    this.intents = [
+      "Guilds",
+      "GuildMessages",
+      "GuildMessageReactions",
+      "DirectMessages",
+      "DirectMessageReactions",
+      "MessageContent"
+    ];
+    this.loadMessageCommandListeners = true;
     this.defaultCooldown = { delay: 15000, limit: 1 };
     this.baseUserDirectory = __dirname;
   }

@@ -1,9 +1,8 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
-import { PieceContext } from "@sapphire/pieces";
 
 export class TopggCommand extends Command {
-  constructor(client: PieceContext) {
+  constructor(client: Command.LoaderContext) {
     super(client, {
       name: "topgg",
       aliases: ["invite", "vote"],

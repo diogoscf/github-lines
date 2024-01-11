@@ -1,19 +1,19 @@
 /**
- * Telegram Bot. It takes advantage of the functions defined in core.ts.
+ * Telegram Bot. It takes advantage of the functions defined in coreLogic.ts.
  */
 
 import * as TelegramBot from "node-telegram-bot-api";
-import { Core } from "../core/core";
+import { CoreLogic } from "../core/coreLogic";
 import { TelegramConfig } from "./types_telegram";
 
 export class GHLTelegramBot extends TelegramBot {
-  readonly core: Core;
+  readonly coreLogic: CoreLogic;
 
   readonly config: TelegramConfig;
 
-  constructor(core: Core, config: TelegramConfig) {
+  constructor(coreLogic: CoreLogic, config: TelegramConfig) {
     super(config.TELEGRAM_TOKEN, { polling: true });
-    this.core = core;
+    this.coreLogic = coreLogic;
     this.config = config;
   }
 
@@ -58,7 +58,7 @@ export class GHLTelegramBot extends TelegramBot {
   }
 
   /**
-   * This is Telegram-level handleMessage(). It calls core-level handleMessage() and then
+   * This is Telegram-level handleMessage(). It calls coreLogic-level handleMessage() and then
    * performs necessary formatting and validation.
    * @param msg Telegram message object
    */
@@ -67,7 +67,7 @@ export class GHLTelegramBot extends TelegramBot {
       return ["Something strange happened - the message is empty!"];
     }
 
-    const { msgList, totalLines } = await this.core.handleMessage(msg.text);
+    const { msgList, totalLines } = await this.coreLogic.handleMessage(msg.text);
 
     if (totalLines > 50) {
       return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50"];

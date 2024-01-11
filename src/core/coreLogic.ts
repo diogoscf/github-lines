@@ -1,9 +1,9 @@
-import * as fetch from "node-fetch";
+import fetch from "node-fetch";
 import { isFilled } from "ts-is-present"; // https://github.com/microsoft/TypeScript/issues/16069
 
-import { LineData, IMessageData } from "./types_core";
+import { LineData, IMessageData, JSONObject } from "./types_core";
 
-export class Core {
+export class CoreLogic {
   readonly GITHUB_TOKEN: string | undefined;
 
   readonly authHeaders: { [key: string]: string };
@@ -82,11 +82,18 @@ export class Core {
         if (!resp.ok) {
           return null;
         }
-        const json = await resp.json();
+        const json = (await resp.json()) as JSONObject;
+
+        // Making Typescript happy (the json being unexpected is highly unlikely)
+        if (!("files" in json) || !json.files) {
+          console.log("The JSON returned by the API was not as expected!");
+          return null;
+        }
         text =
           json.files[dotFilename]?.content ||
           json.files[
-            Object.keys(json.files).find((key) => key.toLowerCase().replace(/\W+/g, "-") === filename.toLowerCase())
+            Object.keys(json.files).find((key) => key.toLowerCase().replace(/\W+/g, "-") === filename.toLowerCase()) ||
+              ""
           ]?.content; // this madness allows for matching filenames with weird chars
 
         if (!text) {
@@ -114,7 +121,7 @@ export class Core {
       if (end > lines.length) end = lines.length;
       if (start === 0) start = 1;
       lineLength = end - start + 1;
-      toDisplay = Core.formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`"); // escape backticks
+      toDisplay = CoreLogic.formatIndent(lines.slice(start - 1, end).join("\n")).replace(/``/g, "`\u200b`"); // escape backticks
     }
 
     // file extension for syntax highlighting

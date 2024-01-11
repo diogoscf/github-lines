@@ -1,9 +1,8 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
-import { PieceContext } from "@sapphire/pieces";
 
 export class SourceCommand extends Command {
-  constructor(client: PieceContext) {
+  constructor(client: Command.LoaderContext) {
     super(client, {
       name: "source",
       aliases: ["github"],

@@ -1,5 +1,5 @@
 /**
- * Matrix Bot. It takes advantage of the functions defined in core.ts.
+ * Matrix Bot. It takes advantage of the functions defined in coreLogic.ts.
  */
 
 import {
@@ -10,7 +10,7 @@ import {
   RichConsoleLogger,
   LogService
 } from "matrix-bot-sdk";
-import { Core } from "../core/core";
+import { CoreLogic } from "../core/coreLogic";
 import { LineData } from "../core/types_core";
 import { MatrixConfig } from "./types_matrix";
 
@@ -21,13 +21,13 @@ LogService.setLevel(LogLevel.ERROR);
 const storage = new SimpleFsStorageProvider("github_lines-matrix.json");
 
 export class GHLMatrixBot extends MatrixClient {
-  readonly core: Core;
+  readonly coreLogic: CoreLogic;
 
   readonly config: MatrixConfig;
 
-  constructor(core: Core, config: MatrixConfig) {
+  constructor(coreLogic: CoreLogic, config: MatrixConfig) {
     super(config.MATRIX_TOKEN, config.MATRIX_HOMESERVER, storage);
-    this.core = core;
+    this.coreLogic = coreLogic;
     this.config = config;
   }
 
@@ -38,6 +38,7 @@ export class GHLMatrixBot extends MatrixClient {
     // The essence of this bot, scan all messages
     AutojoinRoomsMixin.setupOnClient(this);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.on("room.message", async (roomId: string, event: any) => {
       // Don't handle events that don't have contents (they were probably redacted)
       if (!event.content) return;
@@ -64,16 +65,17 @@ export class GHLMatrixBot extends MatrixClient {
   }
 
   /**
-   * This is Matrix-level handleMessage(). It calls core-level handleMessage() and then
+   * This is Matrix-level handleMessage(). It calls coreLogic-level handleMessage() and then
    * performs necessary formatting and validation.
    * @param event any
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async handleMessage(event: any): Promise<(string | null)[]> {
     if (!event.content.body) {
       return ["Something strange happened - the message is empty!"];
     }
 
-    const { msgList, totalLines } = await this.core.handleMessage(event.content.body);
+    const { msgList, totalLines } = await this.coreLogic.handleMessage(event.content.body);
 
     if (totalLines > 50) {
       return ["Sorry, but to prevent spam, we limit the number of lines displayed at 50"];

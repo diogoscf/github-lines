@@ -1,14 +1,13 @@
 import * as DiscordBot from "discord.js";
 import { Command } from "@sapphire/framework";
-import { PieceContext } from "@sapphire/pieces";
 
 export class AboutCommand extends Command {
-  constructor(client: PieceContext) {
+  constructor(client: Command.LoaderContext) {
     super(client, {
       name: "about",
       aliases: ["stats"],
       description: "Info about the bot",
-      requiredClientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
+      requiredClientPermissions: ["SendMessages", "EmbedLinks"]
     });
   }
 
@@ -42,7 +41,7 @@ export class AboutCommand extends Command {
       userCount += guild.memberCount;
     });
     const uptime = msg.client.uptime ? AboutCommand.convertMS(msg.client.uptime) : "N/A";
-    const aboutEmbed = new DiscordBot.MessageEmbed()
+    const aboutEmbed = new DiscordBot.EmbedBuilder()
       .setTitle("About GitHub Lines")
       .setDescription(
         "GitHub Lines is a bot that displays one or more lines when mentioned in a GitHub (or GitLab) link"
@@ -71,14 +70,14 @@ export class AboutCommand extends Command {
         },
         {
           name: "Owner",
-          value: "diogoscf#2167",
+          value: "diogoscf",
           inline: true
         }
       )
-      .setFooter(
-        "Made by diogoscf#2167",
-        "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
-      );
+      .setFooter({
+        text: "Made by diogoscf",
+        iconURL: "https://cdn.discordapp.com/avatars/817789370022101053/e698846c56b5b751c10cf9569fec2a02.webp"
+      });
 
     return msg.channel.send({ embeds: [aboutEmbed] });
   }

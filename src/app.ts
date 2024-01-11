@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { Core } from "./core/core";
+import { CoreLogic } from "./core/coreLogic";
 import * as matrix from "./matrix/bot_matrix";
 import * as telegram from "./telegram/bot_telegram";
 import * as discord from "./discord/bot_discord";
@@ -9,18 +9,11 @@ import { MatrixConfig } from "./matrix/types_matrix";
 import { TelegramConfig } from "./telegram/types_telegram";
 import { DiscordConfig } from "./discord/types_discord";
 
-const {
-  DISCORD_TOKEN,
-  TELEGRAM_TOKEN,
-  TOPGG,
-  PRISMA_TOKEN,
-  GITHUB_TOKEN,
-  MATRIX_TOKEN,
-  MATRIX_HOMESERVER
-} = process.env;
+const { DISCORD_TOKEN, TELEGRAM_TOKEN, TOPGG, PRISMA_TOKEN, GITHUB_TOKEN, MATRIX_TOKEN, MATRIX_HOMESERVER } =
+  process.env;
 
 async function main(): Promise<void> {
-  const core = new Core(GITHUB_TOKEN);
+  const coreLogic = new CoreLogic(GITHUB_TOKEN);
 
   const discordRunning = process.argv.includes("--discord");
   const telegramRunning = process.argv.includes("--telegram");
@@ -28,7 +21,7 @@ async function main(): Promise<void> {
 
   if (discordRunning) {
     if (DISCORD_TOKEN != null) {
-      const discordBot = new discord.GHLDiscordBot(core, new DiscordConfig(DISCORD_TOKEN, PRISMA_TOKEN, TOPGG));
+      const discordBot = new discord.GHLDiscordBot(coreLogic, new DiscordConfig(DISCORD_TOKEN, PRISMA_TOKEN, TOPGG));
       discordBot.start();
     } else {
       console.error("DISCORD_TOKEN is null/undefined");
@@ -37,7 +30,7 @@ async function main(): Promise<void> {
 
   if (telegramRunning) {
     if (TELEGRAM_TOKEN != null) {
-      const telegramBot = new telegram.GHLTelegramBot(core, new TelegramConfig(TELEGRAM_TOKEN));
+      const telegramBot = new telegram.GHLTelegramBot(coreLogic, new TelegramConfig(TELEGRAM_TOKEN));
       telegramBot.start();
     } else {
       console.error("TELEGRAM_TOKEN is null/undefined!");
@@ -46,7 +39,7 @@ async function main(): Promise<void> {
 
   if (matrixRunning) {
     if (MATRIX_TOKEN != null && MATRIX_HOMESERVER != null) {
-      const matrixBot = new matrix.GHLMatrixBot(core, new MatrixConfig(MATRIX_HOMESERVER, MATRIX_TOKEN));
+      const matrixBot = new matrix.GHLMatrixBot(coreLogic, new MatrixConfig(MATRIX_HOMESERVER, MATRIX_TOKEN));
       matrixBot.init();
       matrixBot.start();
     } else {
