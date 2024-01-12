@@ -4,8 +4,8 @@
 
 import * as SapphireBot from "@sapphire/framework";
 import * as DiscordBot from "discord.js";
+import { AutoPoster } from "topgg-autoposter";
 
-import * as Dbl from "dblapi.js";
 import type { DiscordConfig } from "./types_discord";
 import type { CoreLogic } from "../core/coreLogic";
 
@@ -28,7 +28,7 @@ export class GHLDiscordBot extends SapphireBot.SapphireClient {
     this.config = config;
 
     if (this.config.TOPGG) {
-      const dbl = new Dbl(this.config.TOPGG, this); // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+      AutoPoster(this.config.TOPGG, this);
     }
 
     this.login(this.config.DISCORD_TOKEN);
