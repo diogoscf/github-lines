@@ -6,7 +6,7 @@
   "main": "bot.js",
   "bugs": "https://github.com/diogoscf/github-lines/issues",
   "repository": "github:diogoscf/github-lines",
-  "author": "diogoscf <diogo@diogos.cf> (https://diogos.cf)",
+  "author": "diogoscf <diogo@diogoscf.eu> (https://diogoscf.eu)",
   "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
